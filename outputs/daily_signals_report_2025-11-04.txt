@@ -1,47 +1,17 @@
 Daily Trading Signals Report - 2025-11-04
 ========================================
 
-BTST Signals:
-  BTST BUY | ADANIPORTS.NS | Entry: 1444.4 | Target: 1458.84 | Confidence: 0.69
-  BTST BUY | BAJFINANCE.NS | Entry: 1057.0 | Target: 1067.57 | Confidence: 0.76
-  BTST BUY | BAJAJFINSV.NS | Entry: 2073.2 | Target: 2093.93 | Confidence: 0.56
-  BTST BUY | BHARTIARTL.NS | Entry: 2113.3 | Target: 2134.43 | Confidence: 0.77
-  BTST BUY | BPCL.NS | Entry: 372.95 | Target: 376.68 | Confidence: 0.78
-  BTST BUY | DIVISLAB.NS | Entry: 6804.5 | Target: 6872.54 | Confidence: 0.73
-  BTST BUY | GRASIM.NS | Entry: 2882.0 | Target: 2910.82 | Confidence: 0.73
-  BTST BUY | HDFCBANK.NS | Entry: 985.25 | Target: 995.1 | Confidence: 0.61
-  BTST BUY | ITC.NS | Entry: 408.9 | Target: 412.99 | Confidence: 0.47
-  BTST BUY | LTIM.NS | Entry: 5620.0 | Target: 5676.2 | Confidence: 0.68
-  BTST BUY | LT.NS | Entry: 3924.4 | Target: 3963.64 | Confidence: 0.74
-  BTST BUY | M&M.NS | Entry: 3581.2 | Target: 3617.01 | Confidence: 0.80
-  BTST BUY | NESTLEIND.NS | Entry: 1265.0 | Target: 1277.65 | Confidence: 0.67
-  BTST BUY | SBILIFE.NS | Entry: 1971.5 | Target: 1991.22 | Confidence: 0.74
+Top BTST Signals:
+  BTST BUY | BAJFINANCE.NS | Entry: 957.6 | Target: 967.18 | Confidence: 0.81
   BTST BUY | SBIN.NS | Entry: 957.6 | Target: 967.18 | Confidence: 0.80
   BTST BUY | SUNPHARMA.NS | Entry: 1690.0 | Target: 1706.9 | Confidence: 0.76
-  BTST BUY | TATACONSUM.NS | Entry: 1179.3 | Target: 1191.09 | Confidence: 0.68
-  BTST BUY | TATASTEEL.NS | Entry: 179.29 | Target: 181.08 | Confidence: 0.66
-  BTST BUY | TITAN.NS | Entry: 3813.5 | Target: 3851.64 | Confidence: 0.76
-  BTST BUY | IDFCFIRSTB.NS | Entry: 81.13 | Target: 81.94 | Confidence: 0.67
+  BTST BUY | TITAN.NS | Entry: 3813.5 | Target: 3851.64 | Confidence: 0.75
+  BTST BUY | M&M.NS | Entry: 3924.4 | Target: 3963.64 | Confidence: 0.75
 
-Options Signals:
-  OPTIONS BUY CALL | ADANIPORTS.NS | Strike: 1472.0 | Expiry: 2025-12-04 | Confidence: 0.47
-  OPTIONS BUY CALL | BAJFINANCE.NS | Strike: 1078.0 | Expiry: 2025-12-04 | Confidence: 0.51
-  OPTIONS BUY CALL | BAJAJFINSV.NS | Strike: 2115.0 | Expiry: 2025-12-04 | Confidence: 0.38
-  OPTIONS BUY CALL | BHARTIARTL.NS | Strike: 2153.0 | Expiry: 2025-12-04 | Confidence: 0.52
-  OPTIONS BUY CALL | BPCL.NS | Strike: 381.0 | Expiry: 2025-12-04 | Confidence: 0.52
-  OPTIONS BUY CALL | DIVISLAB.NS | Strike: 6922.0 | Expiry: 2025-12-04 | Confidence: 0.49
-  OPTIONS BUY CALL | GRASIM.NS | Strike: 2934.0 | Expiry: 2025-12-04 | Confidence: 0.49
-  OPTIONS BUY CALL | HDFCBANK.NS | Strike: 1001.0 | Expiry: 2025-12-04 | Confidence: 0.41
-  OPTIONS BUY CALL | ITC.NS | Strike: 415.0 | Expiry: 2025-12-04 | Confidence: 0.32
-  OPTIONS BUY CALL | LTIM.NS | Strike: 5734.0 | Expiry: 2025-12-04 | Confidence: 0.46
-  OPTIONS BUY CALL | LT.NS | Strike: 3989.0 | Expiry: 2025-12-04 | Confidence: 0.50
-  OPTIONS BUY CALL | M&M.NS | Strike: 3644.0 | Expiry: 2025-12-04 | Confidence: 0.54
-  OPTIONS BUY CALL | NESTLEIND.NS | Strike: 1293.0 | Expiry: 2025-12-04 | Confidence: 0.46
-  OPTIONS BUY CALL | SBILIFE.NS | Strike: 2008.0 | Expiry: 2025-12-04 | Confidence: 0.50
+Top Options Signals:
+  OPTIONS BUY CALL | BAJFINANCE.NS | Strike: 972.0 | Expiry: 2025-12-04 | Confidence: 0.54
   OPTIONS BUY CALL | SBIN.NS | Strike: 972.0 | Expiry: 2025-12-04 | Confidence: 0.54
   OPTIONS BUY CALL | SUNPHARMA.NS | Strike: 1714.0 | Expiry: 2025-12-04 | Confidence: 0.51
-  OPTIONS BUY CALL | TATACONSUM.NS | Strike: 1207.0 | Expiry: 2025-12-04 | Confidence: 0.46
-  OPTIONS BUY CALL | TATASTEEL.NS | Strike: 183.0 | Expiry: 2025-12-04 | Confidence: 0.45
   OPTIONS BUY CALL | TITAN.NS | Strike: 3882.0 | Expiry: 2025-12-04 | Confidence: 0.51
-  OPTIONS BUY CALL | IDFCFIRSTB.NS | Strike: 83.0 | Expiry: 2025-12-04 | Confidence: 0.46
+  OPTIONS BUY CALL | M&M.NS | Strike: 3989.0 | Expiry: 2025-12-04 | Confidence: 0.51
 

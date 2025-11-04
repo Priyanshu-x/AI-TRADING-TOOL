@@ -22,7 +22,7 @@ import logging
 # Configure logging to display INFO messages in the console
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def save_daily_report(btst_signals, options_signals):
+def save_daily_report(ranked_btst_signals, ranked_options_signals):
     report_dir = "outputs"
     os.makedirs(report_dir, exist_ok=True)
     today_str = datetime.now().strftime("%Y-%m-%d")
@@ -32,20 +32,20 @@ def save_daily_report(btst_signals, options_signals):
         f.write(f"Daily Trading Signals Report - {today_str}\n")
         f.write("="*40 + "\n\n")
 
-        f.write("BTST Signals:\n")
-        if btst_signals:
-            for signal in btst_signals:
+        f.write("Top BTST Signals:\n")
+        if ranked_btst_signals:
+            for signal in ranked_btst_signals:
                 f.write(f"  BTST {signal['action']} | {signal['symbol']} | Entry: {signal['entry_price']} | Target: {signal['target_price']} | Confidence: {signal['confidence_score']:.2f}\n")
         else:
-            f.write("  No BTST signals generated.\n")
+            f.write("  No top BTST signals generated.\n")
         f.write("\n")
 
-        f.write("Options Signals:\n")
-        if options_signals:
-            for signal in options_signals:
+        f.write("Top Options Signals:\n")
+        if ranked_options_signals:
+            for signal in ranked_options_signals:
                 f.write(f"  OPTIONS {signal['action']} | {signal['symbol']} | Strike: {signal['strike_price']} | Expiry: {signal['expiry_date']} | Confidence: {signal['confidence_score']:.2f}\n")
         else:
-            f.write("  No Options signals generated.\n")
+            f.write("  No top Options signals generated.\n")
         f.write("\n")
     print(f"Daily report saved to {report_filename}")
 
@@ -156,28 +156,36 @@ def run_analysis():
     print("\n--- Generating Trade Signals ---")
     btst_signals = signal_generator.generate_btst_signals(all_stocks_data, news_df)
     options_signals = signal_generator.generate_options_signals(all_stocks_data, news_df)
-    st.session_state['btst_signals'] = btst_signals
-    st.session_state['options_signals'] = options_signals
+    
+    # Rank and shortlist signals
+    top_n = st.session_state.get('top_n_recommendations', 5) # Get N from session state, default to 5
+    ranked_btst_signals = signal_generator.get_top_n_signals(btst_signals, top_n)
+    ranked_options_signals = signal_generator.get_top_n_signals(options_signals, top_n)
 
-    if btst_signals:
-        print(f"Generated {len(btst_signals)} BTST signals.")
-        for signal in btst_signals:
+    st.session_state['btst_signals'] = btst_signals # Keep all signals for potential future use
+    st.session_state['options_signals'] = options_signals # Keep all signals for potential future use
+    st.session_state['ranked_btst_signals'] = ranked_btst_signals
+    st.session_state['ranked_options_signals'] = ranked_options_signals
+
+    if ranked_btst_signals:
+        print(f"Generated {len(btst_signals)} BTST signals. Displaying top {len(ranked_btst_signals)}.")
+        for signal in ranked_btst_signals:
             print(f"  BTST {signal['action']} | {signal['symbol']} | Entry: {signal['entry_price']} | Target: {signal['target_price']} | Confidence: {signal['confidence_score']:.2f}")
     else:
-        print("No BTST signals generated.")
+        print("No BTST signals generated or none met the ranking criteria.")
 
-    if options_signals:
-        print(f"Generated {len(options_signals)} Options signals.")
-        for signal in options_signals:
+    if ranked_options_signals:
+        print(f"Generated {len(options_signals)} Options signals. Displaying top {len(ranked_options_signals)}.")
+        for signal in ranked_options_signals:
             print(f"  OPTIONS {signal['action']} | {signal['symbol']} | Strike: {signal['strike_price']} | Expiry: {signal['expiry_date']} | Confidence: {signal['confidence_score']:.2f}")
     else:
-        print("No Options signals generated.")
+        print("No Options signals generated or none met the ranking criteria.")
 
-    # Save all generated signals
+    # Save all generated signals (not just top N)
     signal_generator.save_signals_to_json()
     
-    # Save daily report
-    save_daily_report(btst_signals, options_signals)
+    # Save daily report with top N signals
+    save_daily_report(ranked_btst_signals, ranked_options_signals)
 
     print("\n--- Indicator Report ---")
     if all_stocks_data:
@@ -216,10 +224,24 @@ if __name__ == "__main__":
         st.session_state['btst_signals'] = []
     if 'options_signals' not in st.session_state:
         st.session_state['options_signals'] = []
+    if 'ranked_btst_signals' not in st.session_state:
+        st.session_state['ranked_btst_signals'] = []
+    if 'ranked_options_signals' not in st.session_state:
+        st.session_state['ranked_options_signals'] = []
+    if 'top_n_recommendations' not in st.session_state:
+        st.session_state['top_n_recommendations'] = 5 # Default value
 
     # Sidebar for navigation or controls
     st.sidebar.title("Controls")
     
+    st.session_state['top_n_recommendations'] = st.sidebar.slider(
+        "Number of Top Recommendations to Display (N)",
+        min_value=1,
+        max_value=20,
+        value=st.session_state['top_n_recommendations'],
+        step=1
+    )
+
     if st.sidebar.button("Run Analysis Now", key="run_analysis_button"):
         run_analysis()
 
@@ -273,17 +295,17 @@ if __name__ == "__main__":
     else:
         st.info("No stock data processed for indicator reports yet. Run analysis to fetch data and calculate indicators.")
 
-    st.header("Generated Signals")
-    if 'btst_signals' in st.session_state and st.session_state['btst_signals']:
+    st.header(f"Top {st.session_state['top_n_recommendations']} Generated Signals")
+    if 'ranked_btst_signals' in st.session_state and st.session_state['ranked_btst_signals']:
         st.subheader("BTST Signals")
-        btst_df = pd.DataFrame(st.session_state['btst_signals'])
+        btst_df = pd.DataFrame(st.session_state['ranked_btst_signals'])
         st.dataframe(btst_df, hide_index=True)
     else:
-        st.info("No BTST signals generated yet. Run analysis to generate signals.")
+        st.info("No BTST signals generated yet or none met the ranking criteria. Run analysis to generate signals.")
 
-    if 'options_signals' in st.session_state and st.session_state['options_signals']:
+    if 'ranked_options_signals' in st.session_state and st.session_state['ranked_options_signals']:
         st.subheader("Options Signals")
-        options_df = pd.DataFrame(st.session_state['options_signals'])
+        options_df = pd.DataFrame(st.session_state['ranked_options_signals'])
         st.dataframe(options_df, hide_index=True)
     else:
-        st.info("No Options signals generated yet. Run analysis to generate signals.")
+        st.info("No Options signals generated yet or none met the ranking criteria. Run analysis to generate signals.")

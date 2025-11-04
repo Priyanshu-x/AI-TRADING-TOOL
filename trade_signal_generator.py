@@ -262,6 +262,24 @@ class TradeSignalGenerator:
         """Returns all generated signals."""
         return self.signals
 
+    def rank_signals(self, signals):
+        """
+        Ranks signals based on their confidence_score in descending order.
+        """
+        if not signals:
+            return []
+        # Sort signals by confidence_score in descending order
+        return sorted(signals, key=lambda x: x.get('confidence_score', 0), reverse=True)
+
+    def get_top_n_signals(self, signals, n):
+        """
+        Returns the top N signals after ranking.
+        """
+        if not signals:
+            return []
+        ranked_signals = self.rank_signals(signals)
+        return ranked_signals[:n]
+
 if __name__ == "__main__":
     # This block is for testing the TradeSignalGenerator in isolation.
     # In a real scenario, main.py would orchestrate data fetching, news scraping,
