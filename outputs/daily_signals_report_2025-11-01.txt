@@ -1,0 +1,13 @@
+Daily Trading Signals Report - 2025-11-01
+========================================
+
+BTST Signals:
+  BTST BUY | HDFCBANK.NS | Entry: 987.3 | Target: 997.17 | Confidence: 0.59
+  BTST BUY | KOTAKBANK.NS | Entry: 2102.2 | Target: 2123.22 | Confidence: 0.66
+  BTST BUY | SBIN.NS | Entry: 937.0 | Target: 946.37 | Confidence: 0.74
+
+Options Signals:
+  OPTIONS BUY CALL | HDFCBANK.NS | Strike: 1003.0 | Expiry: 2025-12-01 | Confidence: 0.40
+  OPTIONS BUY CALL | KOTAKBANK.NS | Strike: 2142.0 | Expiry: 2025-12-01 | Confidence: 0.45
+  OPTIONS BUY CALL | SBIN.NS | Strike: 951.0 | Expiry: 2025-12-01 | Confidence: 0.50
+

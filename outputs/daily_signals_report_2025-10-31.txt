@@ -1,0 +1,15 @@
+Daily Trading Signals Report - 2025-10-31
+========================================
+
+BTST Signals:
+  BTST BUY | RELIANCE.NS | Entry: 1488.5 | Target: 1503.38 | Confidence: 0.64
+  BTST BUY | HDFCBANK.NS | Entry: 998.15 | Target: 1008.13 | Confidence: 0.67
+  BTST BUY | KOTAKBANK.NS | Entry: 2137.2 | Target: 2158.57 | Confidence: 0.66
+  BTST BUY | SBIN.NS | Entry: 934.35 | Target: 943.69 | Confidence: 0.68
+
+Options Signals:
+  OPTIONS BUY CALL | RELIANCE.NS | Strike: 1512.0 | Expiry: 2025-11-30 | Confidence: 0.43
+  OPTIONS BUY CALL | HDFCBANK.NS | Strike: 1013.0 | Expiry: 2025-11-30 | Confidence: 0.45
+  OPTIONS BUY CALL | KOTAKBANK.NS | Strike: 2176.0 | Expiry: 2025-11-30 | Confidence: 0.45
+  OPTIONS BUY CALL | SBIN.NS | Strike: 948.0 | Expiry: 2025-11-30 | Confidence: 0.46
+

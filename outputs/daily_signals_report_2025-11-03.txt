@@ -1,0 +1,39 @@
+Daily Trading Signals Report - 2025-11-03
+========================================
+
+BTST Signals:
+  BTST BUY | ADANIPORTS.NS | Entry: 1451.5 | Target: 1466.02 | Confidence: 0.73
+  BTST BUY | AXISBANK.NS | Entry: 1232.8 | Target: 1245.13 | Confidence: 0.64
+  BTST BUY | BAJFINANCE.NS | Entry: 1042.8 | Target: 1053.23 | Confidence: 0.50
+  BTST BUY | BHARTIARTL.NS | Entry: 2054.5 | Target: 2075.04 | Confidence: 0.66
+  BTST BUY | HDFCBANK.NS | Entry: 987.3 | Target: 997.17 | Confidence: 0.67
+  BTST BUY | ITC.NS | Entry: 420.35 | Target: 424.55 | Confidence: 0.72
+  BTST BUY | LTIM.NS | Entry: 5684.5 | Target: 5741.34 | Confidence: 0.71
+  BTST BUY | LT.NS | Entry: 4030.9 | Target: 4071.21 | Confidence: 0.75
+  BTST BUY | ONGC.NS | Entry: 255.37 | Target: 257.92 | Confidence: 0.69
+  BTST BUY | RELIANCE.NS | Entry: 1486.4 | Target: 1501.26 | Confidence: 0.74
+  BTST BUY | TCS.NS | Entry: 3058.0 | Target: 3088.58 | Confidence: 0.57
+  BTST BUY | TITAN.NS | Entry: 3746.7 | Target: 3784.17 | Confidence: 0.61
+  BTST BUY | BANKBARODA.NS | Entry: 278.4 | Target: 281.18 | Confidence: 0.77
+  BTST BUY | FEDERALBNK.NS | Entry: 236.61 | Target: 238.98 | Confidence: 0.61
+  BTST BUY | CANBK.NS | Entry: 136.99 | Target: 138.36 | Confidence: 0.66
+  BTST BUY | AUBANK.NS | Entry: 877.85 | Target: 886.63 | Confidence: 0.77
+
+Options Signals:
+  OPTIONS BUY CALL | ADANIPORTS.NS | Strike: 1480.0 | Expiry: 2025-12-03 | Confidence: 0.49
+  OPTIONS BUY CALL | AXISBANK.NS | Strike: 1256.0 | Expiry: 2025-12-03 | Confidence: 0.43
+  OPTIONS BUY CALL | BAJFINANCE.NS | Strike: 1065.0 | Expiry: 2025-12-03 | Confidence: 0.34
+  OPTIONS BUY CALL | BHARTIARTL.NS | Strike: 2092.0 | Expiry: 2025-12-03 | Confidence: 0.44
+  OPTIONS BUY CALL | HDFCBANK.NS | Strike: 1003.0 | Expiry: 2025-12-03 | Confidence: 0.45
+  OPTIONS BUY CALL | ITC.NS | Strike: 426.0 | Expiry: 2025-12-03 | Confidence: 0.49
+  OPTIONS BUY CALL | LTIM.NS | Strike: 5803.0 | Expiry: 2025-12-03 | Confidence: 0.48
+  OPTIONS BUY CALL | LT.NS | Strike: 4092.0 | Expiry: 2025-12-03 | Confidence: 0.50
+  OPTIONS BUY CALL | ONGC.NS | Strike: 260.0 | Expiry: 2025-12-03 | Confidence: 0.47
+  OPTIONS BUY CALL | RELIANCE.NS | Strike: 1510.0 | Expiry: 2025-12-03 | Confidence: 0.50
+  OPTIONS BUY CALL | TCS.NS | Strike: 3102.0 | Expiry: 2025-12-03 | Confidence: 0.38
+  OPTIONS BUY CALL | TITAN.NS | Strike: 3806.0 | Expiry: 2025-12-03 | Confidence: 0.41
+  OPTIONS BUY CALL | BANKBARODA.NS | Strike: 284.0 | Expiry: 2025-12-03 | Confidence: 0.52
+  OPTIONS BUY CALL | FEDERALBNK.NS | Strike: 242.0 | Expiry: 2025-12-03 | Confidence: 0.42
+  OPTIONS BUY CALL | CANBK.NS | Strike: 141.0 | Expiry: 2025-12-03 | Confidence: 0.45
+  OPTIONS BUY CALL | AUBANK.NS | Strike: 899.0 | Expiry: 2025-12-03 | Confidence: 0.52
+
