@@ -1,282 +1,302 @@
 [
     {
-        "timestamp": "2025-11-06T10:49:15.241913",
+        "timestamp": "2025-11-07T09:51:49.542699",
         "symbol": "ADANIPORTS.NS",
         "trade_type": "BTST",
         "action": "BUY",
-        "entry_price": 1444.4,
-        "target_price": 1458.84,
-        "rationale": "Strong positive news sentiment (confidence: 0.83). Bullish technical momentum (score: 0.50). Price above SMA_20. SMA_20 above SMA_50 (uptrend). Volume spike detected.",
-        "confidence_score": 0.6649720311164857
+        "entry_price": 1435.0,
+        "target_price": 1449.35,
+        "rationale": "Strong positive news sentiment (confidence: 0.88). Bullish technical momentum (score: 0.40). SMA_20 above SMA_50 (uptrend).",
+        "confidence_score": 0.6408644586801528
     },
     {
-        "timestamp": "2025-11-06T10:49:15.254319",
-        "symbol": "ASIANPAINT.NS",
+        "timestamp": "2025-11-07T09:51:49.555042",
+        "symbol": "AXISBANK.NS",
         "trade_type": "BTST",
         "action": "BUY",
-        "entry_price": 2486.7,
-        "target_price": 2511.57,
-        "rationale": "Strong positive news sentiment (confidence: 0.72). Bullish technical momentum (score: 0.40). Price above SMA_20.",
-        "confidence_score": 0.5619059721628825
-    },
-    {
-        "timestamp": "2025-11-06T10:49:15.304410",
-        "symbol": "BHARTIARTL.NS",
-        "trade_type": "BTST",
-        "action": "BUY",
-        "entry_price": 2113.3,
-        "target_price": 2134.43,
-        "rationale": "Strong positive news sentiment (confidence: 0.63). Bullish technical momentum (score: 0.70). Price above SMA_20. SMA_20 above SMA_50 (uptrend). Volume spike detected.",
-        "confidence_score": 0.6674038827419282
-    },
-    {
-        "timestamp": "2025-11-06T10:49:15.313413",
-        "symbol": "BPCL.NS",
-        "trade_type": "BTST",
-        "action": "BUY",
-        "entry_price": 372.95,
-        "target_price": 376.68,
-        "rationale": "Strong positive news sentiment (confidence: 0.79). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
-        "confidence_score": 0.694108921289444
-    },
-    {
-        "timestamp": "2025-11-06T10:49:15.386364",
-        "symbol": "GRASIM.NS",
-        "trade_type": "BTST",
-        "action": "BUY",
-        "entry_price": 2882.0,
-        "target_price": 2910.82,
-        "rationale": "Strong positive news sentiment (confidence: 0.81). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
-        "confidence_score": 0.7032180351870401
-    },
-    {
-        "timestamp": "2025-11-06T10:49:15.506112",
-        "symbol": "KOTAKBANK.NS",
-        "trade_type": "BTST",
-        "action": "BUY",
-        "entry_price": 2096.6,
-        "target_price": 2117.57,
-        "rationale": "Strong positive news sentiment (confidence: 0.94). Bullish technical momentum (score: 0.40). SMA_20 above SMA_50 (uptrend).",
-        "confidence_score": 0.6684140086174011
-    },
-    {
-        "timestamp": "2025-11-06T10:49:15.522702",
-        "symbol": "LTIM.NS",
-        "trade_type": "BTST",
-        "action": "BUY",
-        "entry_price": 5620.0,
-        "target_price": 5676.2,
-        "rationale": "Strong positive news sentiment (confidence: 0.66). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
-        "confidence_score": 0.6298223912715912
-    },
-    {
-        "timestamp": "2025-11-06T10:49:15.535050",
-        "symbol": "LT.NS",
-        "trade_type": "BTST",
-        "action": "BUY",
-        "entry_price": 3924.4,
-        "target_price": 3963.64,
-        "rationale": "Strong positive news sentiment (confidence: 0.62). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
-        "confidence_score": 0.6092981725931168
-    },
-    {
-        "timestamp": "2025-11-06T10:49:15.543454",
-        "symbol": "M&M.NS",
-        "trade_type": "BTST",
-        "action": "BUY",
-        "entry_price": 3581.2,
-        "target_price": 3617.01,
-        "rationale": "Strong positive news sentiment (confidence: 0.83). Bullish technical momentum (score: 0.70). Price above SMA_20. SMA_20 above SMA_50 (uptrend). Volume spike detected.",
-        "confidence_score": 0.7656098768991583
-    },
-    {
-        "timestamp": "2025-11-06T10:49:15.623504",
-        "symbol": "SBIN.NS",
-        "trade_type": "BTST",
-        "action": "BUY",
-        "entry_price": 957.6,
-        "target_price": 967.18,
-        "rationale": "Strong positive news sentiment (confidence: 0.93). Bullish technical momentum (score: 0.70). Price above SMA_20. SMA_20 above SMA_50 (uptrend). Volume spike detected.",
-        "confidence_score": 0.8148683016950434
-    },
-    {
-        "timestamp": "2025-11-06T10:49:15.644051",
-        "symbol": "SUNPHARMA.NS",
-        "trade_type": "BTST",
-        "action": "BUY",
-        "entry_price": 1690.0,
-        "target_price": 1706.9,
-        "rationale": "Strong positive news sentiment (confidence: 0.92). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
-        "confidence_score": 0.7605349004268647
-    },
-    {
-        "timestamp": "2025-11-06T10:49:15.673914",
-        "symbol": "TATASTEEL.NS",
-        "trade_type": "BTST",
-        "action": "BUY",
-        "entry_price": 179.29,
-        "target_price": 181.08,
+        "entry_price": 1228.5,
+        "target_price": 1240.79,
         "rationale": "Strong positive news sentiment (confidence: 0.95). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
-        "confidence_score": 0.7747785031795502
+        "confidence_score": 0.7726257920265198
     },
     {
-        "timestamp": "2025-11-06T10:49:15.707566",
+        "timestamp": "2025-11-07T09:51:49.560044",
+        "symbol": "BAJFINANCE.NS",
+        "trade_type": "BTST",
+        "action": "BUY",
+        "entry_price": 1038.6,
+        "target_price": 1048.99,
+        "rationale": "Strong positive news sentiment (confidence: 0.93). Bullish technical momentum (score: 0.40). SMA_20 above SMA_50 (uptrend).",
+        "confidence_score": 0.6659046456217765
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.572630",
+        "symbol": "BPCL.NS",
+        "trade_type": "BTST",
+        "action": "BUY",
+        "entry_price": 365.6,
+        "target_price": 369.26,
+        "rationale": "Strong positive news sentiment (confidence: 0.87). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
+        "confidence_score": 0.734190034866333
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.575798",
+        "symbol": "BRITANNIA.NS",
+        "trade_type": "BTST",
+        "action": "BUY",
+        "entry_price": 6013.5,
+        "target_price": 6073.64,
+        "rationale": "Strong positive news sentiment (confidence: 0.89). Bullish technical momentum (score: 0.30). Price above SMA_20. Volume spike detected.",
+        "confidence_score": 0.5932010799646378
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.590001",
+        "symbol": "DIVISLAB.NS",
+        "trade_type": "BTST",
+        "action": "BUY",
+        "entry_price": 6848.0,
+        "target_price": 6916.48,
+        "rationale": "Strong positive news sentiment (confidence: 0.93). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
+        "confidence_score": 0.7647608101367951
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.642282",
+        "symbol": "LTIM.NS",
+        "trade_type": "BTST",
+        "action": "BUY",
+        "entry_price": 5652.0,
+        "target_price": 5708.52,
+        "rationale": "Strong positive news sentiment (confidence: 0.74). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
+        "confidence_score": 0.6706473708152771
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.645308",
+        "symbol": "LT.NS",
+        "trade_type": "BTST",
+        "action": "BUY",
+        "entry_price": 3881.6,
+        "target_price": 3920.42,
+        "rationale": "Strong positive news sentiment (confidence: 0.80). Bullish technical momentum (score: 0.40). SMA_20 above SMA_50 (uptrend).",
+        "confidence_score": 0.5999705165624618
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.649466",
+        "symbol": "M&M.NS",
+        "trade_type": "BTST",
+        "action": "BUY",
+        "entry_price": 3618.5,
+        "target_price": 3654.68,
+        "rationale": "Strong positive news sentiment (confidence: 0.79). Bullish technical momentum (score: 0.50). Price above SMA_20. SMA_20 above SMA_50 (uptrend). Volume spike detected.",
+        "confidence_score": 0.6458185493946076
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.678307",
+        "symbol": "SBIN.NS",
+        "trade_type": "BTST",
+        "action": "BUY",
+        "entry_price": 960.75,
+        "target_price": 970.36,
+        "rationale": "Strong positive news sentiment (confidence: 0.83). Bullish technical momentum (score: 0.50). Price above SMA_20. SMA_20 above SMA_50 (uptrend). Volume spike detected.",
+        "confidence_score": 0.6632622281710308
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.685703",
+        "symbol": "SUNPHARMA.NS",
+        "trade_type": "BTST",
+        "action": "BUY",
+        "entry_price": 1685.9,
+        "target_price": 1702.76,
+        "rationale": "Strong positive news sentiment (confidence: 0.85). Bullish technical momentum (score: 0.50). Price above SMA_20. SMA_20 above SMA_50 (uptrend). Volume spike detected.",
+        "confidence_score": 0.6741510530312856
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.704001",
         "symbol": "TITAN.NS",
         "trade_type": "BTST",
         "action": "BUY",
-        "entry_price": 3813.5,
-        "target_price": 3851.64,
-        "rationale": "Strong positive news sentiment (confidence: 0.81). Bullish technical momentum (score: 0.70). Price above SMA_20. SMA_20 above SMA_50 (uptrend). Volume spike detected.",
-        "confidence_score": 0.7531107723712922
+        "entry_price": 3774.4,
+        "target_price": 3812.14,
+        "rationale": "Strong positive news sentiment (confidence: 0.82). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
+        "confidence_score": 0.709971942504247
     },
     {
-        "timestamp": "2025-11-06T10:49:15.742761",
-        "symbol": "IDFCFIRSTB.NS",
+        "timestamp": "2025-11-07T09:51:49.714005",
+        "symbol": "FEDERALBNK.NS",
         "trade_type": "BTST",
         "action": "BUY",
-        "entry_price": 81.13,
-        "target_price": 81.94,
-        "rationale": "Strong positive news sentiment (confidence: 0.66). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
-        "confidence_score": 0.631470936536789
+        "entry_price": 235.83,
+        "target_price": 238.19,
+        "rationale": "Strong positive news sentiment (confidence: 0.63). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
+        "confidence_score": 0.6133822679519654
     },
     {
-        "timestamp": "2025-11-06T10:49:15.791641",
+        "timestamp": "2025-11-07T09:51:49.723458",
+        "symbol": "CANBK.NS",
+        "trade_type": "BTST",
+        "action": "BUY",
+        "entry_price": 139.24,
+        "target_price": 140.63,
+        "rationale": "Strong positive news sentiment (confidence: 0.94). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
+        "confidence_score": 0.7677523374557496
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.726460",
+        "symbol": "AUBANK.NS",
+        "trade_type": "BTST",
+        "action": "BUY",
+        "entry_price": 881.0,
+        "target_price": 889.81,
+        "rationale": "Strong positive news sentiment (confidence: 0.88). Bullish technical momentum (score: 0.60). Price above SMA_20. SMA_20 above SMA_50 (uptrend).",
+        "confidence_score": 0.7406775087118149
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.736530",
         "symbol": "ADANIPORTS.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 1472.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 28.04). Strong positive news sentiment (confidence: 0.83). Bullish technical momentum (score: 0.50). Price above SMA_20.",
-        "confidence_score": 0.44978631660980595
+        "strike_price": 1461.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 26.38). Strong positive news sentiment (confidence: 0.88). Bullish technical momentum (score: 0.40).",
+        "confidence_score": 0.4333703998439799
     },
     {
-        "timestamp": "2025-11-06T10:49:15.803302",
-        "symbol": "ASIANPAINT.NS",
+        "timestamp": "2025-11-07T09:51:49.742540",
+        "symbol": "AXISBANK.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 2531.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 43.96). Strong positive news sentiment (confidence: 0.72). Bullish technical momentum (score: 0.40). Price above SMA_20.",
-        "confidence_score": 0.3804972384461918
+        "strike_price": 1247.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 18.03). Strong positive news sentiment (confidence: 0.95). Bullish technical momentum (score: 0.60). Price above SMA_20.",
+        "confidence_score": 0.5199756214627324
     },
     {
-        "timestamp": "2025-11-06T10:49:15.839968",
-        "symbol": "BHARTIARTL.NS",
+        "timestamp": "2025-11-07T09:51:49.755674",
+        "symbol": "BAJFINANCE.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 2153.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 39.97). Strong positive news sentiment (confidence: 0.63). Bullish technical momentum (score: 0.70). Price above SMA_20.",
-        "confidence_score": 0.45124066533220875
+        "strike_price": 1056.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 17.52). Strong positive news sentiment (confidence: 0.93). Bullish technical momentum (score: 0.40).",
+        "confidence_score": 0.44956098868786426
     },
     {
-        "timestamp": "2025-11-06T10:49:15.848438",
+        "timestamp": "2025-11-07T09:51:49.763193",
         "symbol": "BPCL.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 381.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 7.95). Strong positive news sentiment (confidence: 0.79). Bullish technical momentum (score: 0.60). Price above SMA_20.",
-        "confidence_score": 0.4698415967478244
+        "strike_price": 373.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 7.77). Strong positive news sentiment (confidence: 0.87). Bullish technical momentum (score: 0.60). Price above SMA_20.",
+        "confidence_score": 0.4965406219609294
     },
     {
-        "timestamp": "2025-11-06T10:49:15.908796",
-        "symbol": "GRASIM.NS",
+        "timestamp": "2025-11-07T09:51:49.768451",
+        "symbol": "BRITANNIA.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 2934.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 51.92). Strong positive news sentiment (confidence: 0.81). Bullish technical momentum (score: 0.60). Price above SMA_20.",
-        "confidence_score": 0.4748172729050253
+        "strike_price": 6129.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 115.21). Strong positive news sentiment (confidence: 0.89). Bullish technical momentum (score: 0.30). Price above SMA_20.",
+        "confidence_score": 0.40185381083944366
     },
     {
-        "timestamp": "2025-11-06T10:49:15.989184",
-        "symbol": "KOTAKBANK.NS",
+        "timestamp": "2025-11-07T09:51:49.784016",
+        "symbol": "DIVISLAB.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 2138.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 41.18). Strong positive news sentiment (confidence: 0.94). Bullish technical momentum (score: 0.40).",
-        "confidence_score": 0.4521562252094274
+        "strike_price": 6965.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 117.00). Strong positive news sentiment (confidence: 0.93). Bullish technical momentum (score: 0.60). Price above SMA_20.",
+        "confidence_score": 0.5155356335491407
     },
     {
-        "timestamp": "2025-11-06T10:49:15.997183",
+        "timestamp": "2025-11-07T09:51:49.836440",
         "symbol": "LTIM.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 5734.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 113.68). Strong positive news sentiment (confidence: 0.66). Bullish technical momentum (score: 0.60). Price above SMA_20.",
-        "confidence_score": 0.4266240120990013
+        "strike_price": 5760.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 107.97). Strong positive news sentiment (confidence: 0.74). Bullish technical momentum (score: 0.60). Price above SMA_20.",
+        "confidence_score": 0.45346603488996157
     },
     {
-        "timestamp": "2025-11-06T10:49:16.005211",
+        "timestamp": "2025-11-07T09:51:49.839453",
         "symbol": "LT.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 3989.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 64.65). Strong positive news sentiment (confidence: 0.62). Bullish technical momentum (score: 0.60). Price above SMA_20.",
-        "confidence_score": 0.41169006626868315
+        "strike_price": 3943.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 61.01). Strong positive news sentiment (confidence: 0.80). Bullish technical momentum (score: 0.40).",
+        "confidence_score": 0.4052199604002836
     },
     {
-        "timestamp": "2025-11-06T10:49:16.011981",
+        "timestamp": "2025-11-07T09:51:49.842447",
         "symbol": "M&M.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 3644.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 62.59). Strong positive news sentiment (confidence: 0.83). Bullish technical momentum (score: 0.70). Price above SMA_20.",
-        "confidence_score": 0.5162326432804574
+        "strike_price": 3679.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 60.97). Strong positive news sentiment (confidence: 0.79). Bullish technical momentum (score: 0.50). Price above SMA_20.",
+        "confidence_score": 0.43616233799244936
     },
     {
-        "timestamp": "2025-11-06T10:49:16.076791",
+        "timestamp": "2025-11-07T09:51:49.886739",
         "symbol": "SBIN.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 972.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 14.44). Strong positive news sentiment (confidence: 0.93). Bullish technical momentum (score: 0.70). Price above SMA_20.",
-        "confidence_score": 0.5482704956685411
+        "strike_price": 975.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 14.16). Strong positive news sentiment (confidence: 0.83). Bullish technical momentum (score: 0.50). Price above SMA_20.",
+        "confidence_score": 0.44708789512233493
     },
     {
-        "timestamp": "2025-11-06T10:49:16.088787",
+        "timestamp": "2025-11-07T09:51:49.891744",
         "symbol": "SUNPHARMA.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 1714.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 24.41). Strong positive news sentiment (confidence: 0.92). Bullish technical momentum (score: 0.60). Price above SMA_20.",
-        "confidence_score": 0.5118373035444076
+        "strike_price": 1712.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 25.74). Strong positive news sentiment (confidence: 0.85). Bullish technical momentum (score: 0.50). Price above SMA_20.",
+        "confidence_score": 0.4545224618799563
     },
     {
-        "timestamp": "2025-11-06T10:49:16.109737",
-        "symbol": "TATASTEEL.NS",
-        "trade_type": "OPTIONS",
-        "action": "BUY CALL",
-        "strike_price": 183.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 3.25). Strong positive news sentiment (confidence: 0.95). Bullish technical momentum (score: 0.60). Price above SMA_20.",
-        "confidence_score": 0.5225547162605303
-    },
-    {
-        "timestamp": "2025-11-06T10:49:16.130999",
+        "timestamp": "2025-11-07T09:51:49.926374",
         "symbol": "TITAN.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 3882.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 68.71). Strong positive news sentiment (confidence: 0.81). Bullish technical momentum (score: 0.70). Price above SMA_20.",
-        "confidence_score": 0.5080800746710619
+        "strike_price": 3845.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 70.51). Strong positive news sentiment (confidence: 0.82). Bullish technical momentum (score: 0.60). Price above SMA_20.",
+        "confidence_score": 0.47954204035177433
     },
     {
-        "timestamp": "2025-11-06T10:49:16.172236",
-        "symbol": "IDFCFIRSTB.NS",
+        "timestamp": "2025-11-07T09:51:49.944379",
+        "symbol": "FEDERALBNK.NS",
         "trade_type": "OPTIONS",
         "action": "BUY CALL",
-        "strike_price": 83.0,
-        "expiry_date": "2025-12-06",
-        "rationale": "High predicted volatility (ATR: 2.06). Strong positive news sentiment (confidence: 0.66). Bullish technical momentum (score: 0.60). Price above SMA_20.",
-        "confidence_score": 0.4294444059764968
+        "strike_price": 241.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 4.88). Strong positive news sentiment (confidence: 0.63). Bullish technical momentum (score: 0.60). Price above SMA_20.",
+        "confidence_score": 0.4158181245167081
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.956913",
+        "symbol": "CANBK.NS",
+        "trade_type": "OPTIONS",
+        "action": "BUY CALL",
+        "strike_price": 143.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 3.31). Strong positive news sentiment (confidence: 0.94). Bullish technical momentum (score: 0.60). Price above SMA_20.",
+        "confidence_score": 0.5197485995470278
+    },
+    {
+        "timestamp": "2025-11-07T09:51:49.960923",
+        "symbol": "AUBANK.NS",
+        "trade_type": "OPTIONS",
+        "action": "BUY CALL",
+        "strike_price": 902.0,
+        "expiry_date": "2025-12-07",
+        "rationale": "High predicted volatility (ATR: 20.60). Strong positive news sentiment (confidence: 0.88). Bullish technical momentum (score: 0.60). Price above SMA_20.",
+        "confidence_score": 0.5015778304567132
     }
 ]
