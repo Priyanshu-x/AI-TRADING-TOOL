@@ -5,15 +5,17 @@ from datetime import datetime, timedelta
 import json
 import os
 import logging
+from self_learning_module import SelfLearningModule
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class TradeSignalGenerator:
-    def __init__(self, sentiment_threshold=0.5, momentum_strength_threshold=0.3, btst_target_percentage=0.01):
+    def __init__(self, sentiment_threshold=0.5, momentum_strength_threshold=0.3, btst_target_percentage=0.01, learning_module=None):
         self.sentiment_threshold = sentiment_threshold
         self.momentum_strength_threshold = momentum_strength_threshold
         self.btst_target_percentage = btst_target_percentage
         self.signals = []
+        self.learning_module = learning_module # Inject learning module
 
     def _assess_sentiment_for_stock(self, symbol, news_df):
         """Aggregates sentiment for a given stock."""
@@ -120,6 +122,9 @@ class TradeSignalGenerator:
                     "rationale": " ".join(rationale),
                     "confidence_score": (sentiment_confidence + momentum_score) / 2 # Simple average for now
                 }
+                # Adjust confidence score using the learning module if available
+                if self.learning_module:
+                    signal['confidence_score'] = self.learning_module.get_adjusted_confidence(signal)
                 btst_signals.append(signal)
                 logging.info(f"Generated BTST BUY signal for {symbol}.")
 
@@ -145,6 +150,9 @@ class TradeSignalGenerator:
                     "rationale": " ".join(rationale),
                     "confidence_score": (sentiment_confidence + abs(momentum_score)) / 2
                 }
+                # Adjust confidence score using the learning module if available
+                if self.learning_module:
+                    signal['confidence_score'] = self.learning_module.get_adjusted_confidence(signal)
                 btst_signals.append(signal)
                 logging.info(f"Generated BTST SELL signal for {symbol}.")
             else:
@@ -216,6 +224,9 @@ class TradeSignalGenerator:
                     "rationale": " ".join(rationale),
                     "confidence_score": (sentiment_confidence + momentum_score + (atr / latest_data['Close'])) / 3 # Incorporate volatility
                 }
+                # Adjust confidence score using the learning module if available
+                if self.learning_module:
+                    signal['confidence_score'] = self.learning_module.get_adjusted_confidence(signal)
                 options_signals.append(signal)
                 logging.info(f"Generated OPTIONS BUY CALL signal for {symbol}.")
 
@@ -240,6 +251,9 @@ class TradeSignalGenerator:
                     "rationale": " ".join(rationale),
                     "confidence_score": (sentiment_confidence + abs(momentum_score) + (atr / latest_data['Close'])) / 3
                 }
+                # Adjust confidence score using the learning module if available
+                if self.learning_module:
+                    signal['confidence_score'] = self.learning_module.get_adjusted_confidence(signal)
                 options_signals.append(signal)
                 logging.info(f"Generated OPTIONS BUY PUT signal for {symbol}.")
             else:

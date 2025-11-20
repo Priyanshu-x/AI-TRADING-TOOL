@@ -16,8 +16,12 @@ import os
 from trade_signal_generator import TradeSignalGenerator
 import schedule
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
+from signal_database_manager import SignalDatabaseManager
+from market_timing_manager import MarketTimingManager
+from signal_validator import SignalValidator
+from self_learning_module import SelfLearningModule
 
 # Configure logging to display INFO messages in the console
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -49,8 +53,18 @@ def save_daily_report(ranked_btst_signals, ranked_options_signals):
         f.write("\n")
     print(f"Daily report saved to {report_filename}")
 
-def run_analysis():
+def run_analysis(db_manager, market_manager, signal_validator, learning_module):
     st.write("Starting AI Trading Signal Tool...")
+    
+    current_date_str = market_manager.get_current_market_time().strftime("%Y-%m-%d")
+    
+    # Check market timing for signal generation
+    if not market_manager.is_market_open():
+        st.warning("Market is currently closed. Generating signals for storage, but validation will be deferred.")
+        # If market is closed, we still generate signals but mark them for deferred validation
+        # and skip immediate validation/learning.
+        # We will still proceed with signal generation and saving to DB.
+    
     # Initialize WatchlistManager
     manager = WatchlistManager()
 
@@ -70,8 +84,8 @@ def run_analysis():
     if 'all_stocks_data' not in st.session_state:
         st.session_state['all_stocks_data'] = {}
 
-    # Initialize TradeSignalGenerator
-    signal_generator = TradeSignalGenerator()
+    # Initialize TradeSignalGenerator, injecting the learning module
+    signal_generator = TradeSignalGenerator(learning_module=learning_module)
 
     # Fetch all tickers from watchlist
     all_tickers = get_all_watchlist_tickers()
@@ -92,7 +106,8 @@ def run_analysis():
             try:
                 df = pd.read_csv(file_path, parse_dates=['Date'])
                 if df is not None and not df.empty:
-                    df.set_index('Date', inplace=True) # Set 'Date' column as index
+                    # Set 'Date' column as index after reading
+                    df.set_index('Date', inplace=True)
                     # Ensure numeric columns are of numeric type
                     numeric_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
                     for col in numeric_cols:
@@ -181,11 +196,38 @@ def run_analysis():
     else:
         print("No Options signals generated or none met the ranking criteria.")
 
-    # Save all generated signals (not just top N)
+    # Save all generated signals (not just top N) to JSON (for historical reference)
     signal_generator.save_signals_to_json()
     
-    # Save daily report with top N signals
+    # Save daily report with top N signals to a text file
     save_daily_report(ranked_btst_signals, ranked_options_signals)
+
+    # Store the top N signals in the database for validation
+    all_top_signals = ranked_btst_signals + ranked_options_signals
+    if all_top_signals:
+        db_manager.save_signals(all_top_signals, current_date_str)
+        st.success(f"Top {len(all_top_signals)} signals saved to database for {current_date_str}.")
+    else:
+        st.info("No top signals generated to save to database.")
+
+    # --- Signal Validation and Learning (only after market closes on a trading day) ---
+    if market_manager.is_market_closed_for_day():
+        st.write(f"Market closed for the day. Running signal validation for {current_date_str}...")
+        validation_results = signal_validator.validate_signals(current_date_str)
+        if validation_results:
+            st.success(f"Validated {len(validation_results)} signals for {current_date_str}.")
+            metrics = signal_validator.calculate_overall_metrics()
+            st.write(f"Overall Accuracy: {metrics['accuracy']:.2f}%, Total P&L: {metrics['total_pnl']:.2f}, Hit Rate: {metrics['hit_rate']:.2f}%")
+            
+            # Update learning model weights
+            learning_module.update_weights()
+            st.success("Self-learning model weights updated.")
+        else:
+            st.info(f"No signals were validated for {current_date_str}.")
+    elif market_manager.is_holiday(market_manager.get_current_market_time().date()):
+        st.info(f"Today ({current_date_str}) is a market holiday. Signal validation deferred until the next trading day.")
+    else:
+        st.info(f"Market is still open or not yet closed for the day. Signal validation will run after {market_manager.market_close_time.strftime('%I:%M %p IST')}.")
 
     print("\n--- Indicator Report ---")
     if all_stocks_data:
@@ -215,6 +257,16 @@ if __name__ == "__main__":
     st.set_page_config(layout="wide")
     st.title("AI Trading Signal Dashboard")
 
+    # Initialize core components
+    db_manager = SignalDatabaseManager()
+    market_manager = MarketTimingManager()
+    signal_validator = SignalValidator(db_manager, market_manager)
+    learning_module = SelfLearningModule(db_manager)
+
+    # Update learning weights at startup based on historical data
+    learning_module.update_weights()
+    logging.info("Self-learning module initialized and weights updated from historical data.")
+
     # Initialize session state variables if not already present
     if 'all_stocks_data' not in st.session_state:
         st.session_state['all_stocks_data'] = {}
@@ -242,21 +294,33 @@ if __name__ == "__main__":
         step=1
     )
 
+    # Display market status banner
+    current_market_time = market_manager.get_current_market_time()
+    if market_manager.is_holiday(current_market_time.date()):
+        st.warning(f"Market Closed: Today ({current_market_time.strftime('%Y-%m-%d')}) is a market holiday.")
+    elif not market_manager.is_market_open():
+        st.warning(f"Market Closed: Current time ({current_market_time.strftime('%H:%M IST')}) is outside trading hours.")
+    else:
+        st.success(f"Market Open: Current time ({current_market_time.strftime('%H:%M IST')}).")
+
     if st.sidebar.button("Run Analysis Now", key="run_analysis_button"):
-        run_analysis()
+        run_analysis(db_manager, market_manager, signal_validator, learning_module)
 
     st.sidebar.subheader("Schedule Analysis")
     schedule_option = st.sidebar.radio(
         "Choose a schedule:",
-        ("Manual", "Pre-Close (3:00 PM IST)", "Open (9:15 AM IST)")
+        ("Manual", "Pre-Close (3:00 PM IST)", "Open (9:15 AM IST)", "Post-Close Validation (3:45 PM IST)")
     )
 
     if schedule_option == "Pre-Close (3:00 PM IST)":
-        schedule.every().day.at("15:00").do(run_analysis)
+        schedule.every().day.at("15:00").do(run_analysis, db_manager, market_manager, signal_validator, learning_module)
         st.sidebar.info("Scheduled daily analysis for 3:00 PM IST.")
     elif schedule_option == "Open (9:15 AM IST)":
-        schedule.every().day.at("09:15").do(run_analysis)
+        schedule.every().day.at("09:15").do(run_analysis, db_manager, market_manager, signal_validator, learning_module)
         st.sidebar.info("Scheduled daily analysis for 9:15 AM IST.")
+    elif schedule_option == "Post-Close Validation (3:45 PM IST)":
+        schedule.every().day.at("15:45").do(run_analysis, db_manager, market_manager, signal_validator, learning_module)
+        st.sidebar.info("Scheduled daily post-close validation for 3:45 PM IST.")
     
     # To run scheduled jobs in a Streamlit app, you'd typically need a separate thread or process.
     # For simplicity in this example, we'll just show the scheduled status.

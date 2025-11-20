@@ -8,7 +8,7 @@ from watchlist_manager import WatchlistManager
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def fetch_stock_data(tickers, output_dir="data"):
+def fetch_stock_data(tickers, output_dir="data", start_date=None, end_date=None):
     """
     Fetches live and historical price/volume data for a list of stock tickers
     using yfinance and stores it in CSV files.
@@ -25,9 +25,17 @@ def fetch_stock_data(tickers, output_dir="data"):
         logging.info(f"Created output directory: {output_dir}")
 
     summary = {}
-    end_date = datetime.now()
-    # Go back 45 calendar days to ensure we capture at least 30 trading days
-    start_date = end_date - timedelta(days=365) # Fetch 1 year of data for more robust indicator calculation
+    # Default date range if not provided
+    if end_date is None:
+        end_date = datetime.now()
+    if start_date is None:
+        start_date = end_date - timedelta(days=365) # Fetch 1 year of data by default
+    
+    # Ensure dates are in datetime.date format if they are datetimes
+    if isinstance(start_date, datetime):
+        start_date = start_date.date()
+    if isinstance(end_date, datetime):
+        end_date = end_date.date()
 
     for ticker in tickers:
         try:
@@ -36,19 +44,14 @@ def fetch_stock_data(tickers, output_dir="data"):
             data = yf.download(ticker, start=start_date, end=end_date)
 
             if data.empty:
-                logging.warning(f"No data found for {ticker}. Skipping.")
+                logging.warning(f"No data found for {ticker} for the requested date range. Skipping.")
                 summary[ticker] = {"status": "failed", "records": 0, "reason": "No data found"}
                 continue
 
-
-            if data.empty:
-                logging.warning(f"Less than 30 trading days of data found for {ticker}. Skipping.")
-                summary[ticker] = {"status": "failed", "records": 0, "reason": "Less than 30 trading days of data"}
-                continue
-
             file_path = os.path.join(output_dir, f"{ticker}_data.csv")
-            data.reset_index(inplace=True) # Make 'Date' a regular column
-            data.to_csv(file_path, index=False) # Do not write DataFrame index as a column
+            data = data.reset_index() # Converts the index (Dates) into a column
+            data.rename(columns={'index': 'Date'}, inplace=True) # Renames the new column to 'Date'
+            data.to_csv(file_path, index=False) # Do NOT write the DataFrame index again, as 'Date' is now a regular column
             logging.info(f"Successfully downloaded {len(data)} records for {ticker} to {file_path}")
             summary[ticker] = {"status": "success", "records": len(data), "file": file_path}
 
