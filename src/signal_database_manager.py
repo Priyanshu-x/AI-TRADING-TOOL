@@ -6,7 +6,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class SignalDatabaseManager:
-    def __init__(self, db_path="signals.db"):
+    def __init__(self, db_path="../signals.db"):
         self.db_path = db_path
         self._create_tables()
 

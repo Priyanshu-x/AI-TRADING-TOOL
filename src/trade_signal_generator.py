@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import json
 import os
 import logging
-from self_learning_module import SelfLearningModule
+from .self_learning_module import SelfLearningModule
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -262,7 +262,7 @@ class TradeSignalGenerator:
         self.signals.extend(options_signals)
         return options_signals
 
-    def save_signals_to_json(self, filename="ai_trading_signal_tool/outputs/trade_signals.json"):
+    def save_signals_to_json(self, filename="../outputs/trade_signals.json"):
         """Saves all generated signals to a JSON file."""
         if self.signals:
             os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -347,4 +347,4 @@ if __name__ == "__main__":
     for signal in options_signals:
         print(json.dumps(signal, indent=4))
 
-    signal_generator.save_signals_to_json("ai_trading_signal_tool/outputs/test_trade_signals.json")
+    signal_generator.save_signals_to_json("../outputs/test_trade_signals.json")

@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import logging
 import re
 import os
-from sentiment_analyzer import SentimentAnalyzer
+from .sentiment_analyzer import SentimentAnalyzer
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -143,7 +143,7 @@ class NewsScraper:
             df = pd.concat([df, sentiment_df], axis=1)
         return df
 
-    def save_news_to_csv(self, filename="ai_trading_signal_tool/outputs/news_headlines.csv"):
+    def save_news_to_csv(self, filename="../outputs/news_headlines.csv"):
         """Saves the collected news to a CSV file."""
         df = self.get_news_as_dataframe()
         if not df.empty:

@@ -1,9 +1,9 @@
 import pandas as pd
 from datetime import datetime, timedelta
 import logging
-from data_fetcher import fetch_stock_data # Assuming data_fetcher can fetch specific day's data
-from signal_database_manager import SignalDatabaseManager
-from market_timing_manager import MarketTimingManager # Import MarketTimingManager
+from .data_fetcher import fetch_stock_data # Assuming data_fetcher can fetch specific day's data
+from .signal_database_manager import SignalDatabaseManager
+from .market_timing_manager import MarketTimingManager # Import MarketTimingManager
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 

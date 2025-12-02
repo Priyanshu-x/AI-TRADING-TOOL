@@ -6,11 +6,11 @@ import pandas as pd
 from unittest.mock import patch, MagicMock
 
 # Import the new modules
-from signal_database_manager import SignalDatabaseManager
-from market_timing_manager import MarketTimingManager
-from signal_validator import SignalValidator
-from self_learning_module import SelfLearningModule
-from trade_signal_generator import TradeSignalGenerator
+from src.signal_database_manager import SignalDatabaseManager
+from src.market_timing_manager import MarketTimingManager
+from src.signal_validator import SignalValidator
+from src.self_learning_module import SelfLearningModule
+from src.trade_signal_generator import TradeSignalGenerator
 
 # Mock data_fetcher.fetch_stock_data for SignalValidator tests
 def mock_fetch_stock_data(tickers, output_dir="data", start_date=None, end_date=None):
@@ -157,7 +157,7 @@ class TestMarketTimingManager(unittest.TestCase):
     def setUp(self):
         self.market_manager = MarketTimingManager()
 
-    @patch('market_timing_manager.datetime')
+    @patch('src.market_timing_manager.datetime')
     def test_is_market_open_during_hours(self, mock_dt):
         # Mock current time to be within market hours on a weekday
         mock_dt.datetime.utcnow.return_value = datetime(2025, 11, 19, 10, 0, 0) # 3:30 PM IST
@@ -171,7 +171,7 @@ class TestMarketTimingManager(unittest.TestCase):
 
         self.assertTrue(self.market_manager.is_market_open())
 
-    @patch('market_timing_manager.datetime')
+    @patch('src.market_timing_manager.datetime')
     def test_is_market_open_after_hours(self, mock_dt):
         # Mock current time to be after market hours on a weekday
         mock_dt.datetime.utcnow.return_value = datetime(2025, 11, 19, 11, 0, 0) # 4:30 PM IST
@@ -185,7 +185,7 @@ class TestMarketTimingManager(unittest.TestCase):
 
         self.assertFalse(self.market_manager.is_market_open())
 
-    @patch('market_timing_manager.datetime')
+    @patch('src.market_timing_manager.datetime')
     def test_is_market_open_on_weekend(self, mock_dt):
         # Mock current time to be on a Saturday
         mock_dt.datetime.utcnow.return_value = datetime(2025, 11, 22, 6, 0, 0) # Saturday 11:30 AM IST
@@ -199,7 +199,7 @@ class TestMarketTimingManager(unittest.TestCase):
 
         self.assertFalse(self.market_manager.is_market_open())
 
-    @patch('market_timing_manager.datetime')
+    @patch('src.market_timing_manager.datetime')
     def test_is_holiday(self, mock_dt):
         # Mock a holiday date
         mock_dt.date.return_value = datetime(2025, 1, 26).date() # Republic Day
@@ -208,7 +208,7 @@ class TestMarketTimingManager(unittest.TestCase):
         mock_dt.date.return_value = datetime(2025, 1, 27).date() # Not a holiday
         self.assertFalse(self.market_manager.is_holiday(mock_dt.date.return_value))
 
-    @patch('market_timing_manager.datetime')
+    @patch('src.market_timing_manager.datetime')
     def test_is_market_closed_for_day(self, mock_dt):
         # Mock time after market close on a weekday
         mock_dt.datetime.utcnow.return_value = datetime(2025, 11, 19, 11, 0, 0) # 4:30 PM IST
@@ -251,7 +251,7 @@ class TestSignalValidator(unittest.TestCase):
                 os.remove(os.path.join(self.output_dir, f))
             os.rmdir(self.output_dir)
 
-    @patch('signal_validator.fetch_stock_data', side_effect=mock_fetch_stock_data)
+    @patch('src.signal_validator.fetch_stock_data', side_effect=mock_fetch_stock_data)
     def test_validate_btst_buy_signal(self, mock_fetch):
         trade_date = (datetime.now().date() - timedelta(days=1)).strftime("%Y-%m-%d")
         signal = {
@@ -276,7 +276,7 @@ class TestSignalValidator(unittest.TestCase):
         self.assertTrue(results[0]['target_hit']) # 102 >= 102
         self.assertAlmostEqual(results[0]['pnl'], 1.0) # 101 - 100
 
-    @patch('signal_validator.fetch_stock_data', side_effect=mock_fetch_stock_data)
+    @patch('src.signal_validator.fetch_stock_data', side_effect=mock_fetch_stock_data)
     def test_validate_options_buy_call_signal(self, mock_fetch):
         trade_date = (datetime.now().date() - timedelta(days=1)).strftime("%Y-%m-%d")
         signal = {
@@ -302,7 +302,7 @@ class TestSignalValidator(unittest.TestCase):
         self.assertFalse(results[0]['target_hit']) # 102 >= 2010 is False
         self.assertAlmostEqual(results[0]['pnl'], (101.0 - 2010.0) * 100) # (Close - Strike) * 100
 
-    @patch('signal_validator.fetch_stock_data', side_effect=mock_fetch_stock_data)
+    @patch('src.signal_validator.fetch_stock_data', side_effect=mock_fetch_stock_data)
     def test_calculate_overall_metrics(self, mock_fetch):
         trade_date1 = (datetime.now().date() - timedelta(days=2)).strftime("%Y-%m-%d")
         trade_date2 = (datetime.now().date() - timedelta(days=1)).strftime("%Y-%m-%d")

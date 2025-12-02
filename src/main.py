@@ -1,10 +1,17 @@
 # ai_trading_signal_tool/main.py
 
+import sys
+import os
+
+# Add the parent directory (the project root) to the Python path
+# This allows the 'src' package to be discoverable when main.py is run directly.
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import streamlit as st
-from watchlist_manager import WatchlistManager
-from news_scraper import NewsScraper
-from data_fetcher import fetch_stock_data, get_all_watchlist_tickers
-from indicator_calculator import (
+from src.watchlist_manager import WatchlistManager
+from src.news_scraper import NewsScraper
+from src.data_fetcher import fetch_stock_data, get_all_watchlist_tickers
+from src.indicator_calculator import (
     calculate_moving_averages,
     calculate_atr,
     calculate_volume_spikes,
@@ -13,15 +20,15 @@ from indicator_calculator import (
 )
 import pandas as pd
 import os
-from trade_signal_generator import TradeSignalGenerator
+from src.trade_signal_generator import TradeSignalGenerator
 import schedule
 import time
 from datetime import datetime, timedelta
 import logging
-from signal_database_manager import SignalDatabaseManager
-from market_timing_manager import MarketTimingManager
-from signal_validator import SignalValidator
-from self_learning_module import SelfLearningModule
+from src.signal_database_manager import SignalDatabaseManager
+from src.market_timing_manager import MarketTimingManager
+from src.signal_validator import SignalValidator
+from src.self_learning_module import SelfLearningModule
 
 # Configure logging to display INFO messages in the console
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

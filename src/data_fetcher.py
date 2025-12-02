@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 import os
 import logging
-from watchlist_manager import WatchlistManager
+from .watchlist_manager import WatchlistManager
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -61,7 +61,7 @@ def fetch_stock_data(tickers, output_dir="data", start_date=None, end_date=None)
     
     return summary
 
-def get_all_watchlist_tickers(config_path='config/config.yaml'):
+def get_all_watchlist_tickers(config_path='../config/config.yaml'):
     """
     Loads the watchlist using WatchlistManager and returns a flattened list of all ticker symbols.
     """

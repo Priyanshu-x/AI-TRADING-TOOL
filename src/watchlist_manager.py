@@ -2,11 +2,11 @@
 
 import yaml
 import os
-from nse_scraper import NSEScraper
+from .nse_scraper import NSEScraper
 import datetime
 
 class WatchlistManager:
-    def __init__(self, config_path='config/config.yaml'):
+    def __init__(self, config_path='../config/config.yaml'):
         self.config_path = config_path
         self.watchlist = {}
 
