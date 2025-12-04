@@ -176,7 +176,15 @@ def run_analysis(db_manager, market_manager, signal_validator, learning_module):
 
     # Generate BTST and Options Signals
     print("\n--- Generating Trade Signals ---")
-    btst_signals = signal_generator.generate_btst_signals(all_stocks_data, news_df)
+    
+    # Generate BTST CALL signals
+    btst_call_signals = signal_generator.generate_btst_signals(all_stocks_data, news_df, side="CALL")
+    # Generate BTST PUT signals
+    btst_put_signals = signal_generator.generate_btst_signals(all_stocks_data, news_df, side="PUT")
+    
+    # Combine both CALL and PUT BTST signals
+    btst_signals = btst_call_signals + btst_put_signals
+
     options_signals = signal_generator.generate_options_signals(all_stocks_data, news_df)
     
     # Rank and shortlist signals
@@ -190,9 +198,9 @@ def run_analysis(db_manager, market_manager, signal_validator, learning_module):
     st.session_state['ranked_options_signals'] = ranked_options_signals
 
     if ranked_btst_signals:
-        print(f"Generated {len(btst_signals)} BTST signals. Displaying top {len(ranked_btst_signals)}.")
+        print(f"Generated {len(btst_signals)} total BTST signals. Displaying top {len(ranked_btst_signals)}.")
         for signal in ranked_btst_signals:
-            print(f"  BTST {signal['action']} | {signal['symbol']} | Entry: {signal['entry_price']} | Target: {signal['target_price']} | Confidence: {signal['confidence_score']:.2f}")
+            print(f"  BTST {signal.get('signal_type', signal['action'])} | {signal['symbol']} | Entry: {signal['entry_price']} | Target: {signal['target_price']} | Confidence: {signal['confidence_score']:.2f}")
     else:
         print("No BTST signals generated or none met the ranking criteria.")
 
@@ -289,16 +297,26 @@ if __name__ == "__main__":
         st.session_state['ranked_options_signals'] = []
     if 'top_n_recommendations' not in st.session_state:
         st.session_state['top_n_recommendations'] = 5 # Default value
+    if 'signal_type_filter' not in st.session_state:
+        st.session_state['signal_type_filter'] = "Both" # Default to show both
 
     # Sidebar for navigation or controls
     st.sidebar.title("Controls")
     
+    # Slider for number of top recommendations
     st.session_state['top_n_recommendations'] = st.sidebar.slider(
         "Number of Top Recommendations to Display (N)",
         min_value=1,
         max_value=20,
         value=st.session_state['top_n_recommendations'],
         step=1
+    )
+
+    # Selectbox for filtering signal types (CALL, PUT, or Both)
+    st.session_state['signal_type_filter'] = st.sidebar.selectbox(
+        "Filter Signal Type:",
+        options=["Both", "CALL", "PUT"],
+        index=0 # Default to "Both"
     )
 
     # Display market status banner
@@ -367,16 +385,58 @@ if __name__ == "__main__":
         st.info("No stock data processed for indicator reports yet. Run analysis to fetch data and calculate indicators.")
 
     st.header(f"Top {st.session_state['top_n_recommendations']} Generated Signals")
-    if 'ranked_btst_signals' in st.session_state and st.session_state['ranked_btst_signals']:
-        st.subheader("BTST Signals")
-        btst_df = pd.DataFrame(st.session_state['ranked_btst_signals'])
-        st.dataframe(btst_df, hide_index=True)
-    else:
-        st.info("No BTST signals generated yet or none met the ranking criteria. Run analysis to generate signals.")
-
+    # Filter options signals based on the selected type from the sidebar
+    filtered_options_signals = []
     if 'ranked_options_signals' in st.session_state and st.session_state['ranked_options_signals']:
+        if st.session_state['signal_type_filter'] == "Both":
+            filtered_options_signals = st.session_state['ranked_options_signals']
+        else:
+            # Filter by option_type (CE/PE) based on user's selection
+            filtered_options_signals = [
+                s for s in st.session_state['ranked_options_signals']
+                if s.get('option_type') == st.session_state['signal_type_filter'].upper()
+            ]
+
+    # Filter BTST signals based on the selected type from the sidebar
+    filtered_btst_signals = []
+    if 'ranked_btst_signals' in st.session_state and st.session_state['ranked_btst_signals']:
+        if st.session_state['signal_type_filter'] == "Both":
+            filtered_btst_signals = st.session_state['ranked_btst_signals']
+        else:
+            # Filter by signal_type (BTST_CALL/BTST_PUT) based on user's selection
+            filtered_btst_signals = [
+                s for s in st.session_state['ranked_btst_signals']
+                if s.get('signal_type', '').replace('BTST_', '') == st.session_state['signal_type_filter'].upper()
+            ]
+
+    if filtered_btst_signals:
+        st.subheader("BTST Signals")
+        btst_df = pd.DataFrame(filtered_btst_signals)
+        # Display relevant columns for BTST, including new option details
+        display_cols_btst = ['symbol', 'signal_type', 'action', 'entry_price', 'target_price', 'strike_price', 'expiry_date', 'option_symbol', 'confidence_score', 'rationale']
+        # Filter columns to only include those present in the DataFrame
+        btst_df_display = btst_df[[col for col in display_cols_btst if col in btst_df.columns]]
+        
+        # Rename 'signal_type' to 'Type' for better UI if present
+        if 'signal_type' in btst_df_display.columns:
+            btst_df_display.rename(columns={'signal_type': 'Type'}, inplace=True)
+        
+        st.dataframe(btst_df_display, hide_index=True)
+    else:
+        # Update the message to be specific to BTST CALL/PUT
+        if st.session_state['signal_type_filter'] == "Both":
+            st.info("No BTST signals generated yet or none met the ranking criteria. Run analysis to generate signals.")
+        else:
+            st.info(f"No BTST {st.session_state['signal_type_filter']} signals generated yet or none met the ranking criteria. Run analysis to generate signals.")
+
+    if filtered_options_signals:
         st.subheader("Options Signals")
-        options_df = pd.DataFrame(st.session_state['ranked_options_signals'])
+        options_df = pd.DataFrame(filtered_options_signals)
+        # Add a 'Type' column for display, using 'option_type' (CE/PE)
+        if 'option_type' in options_df.columns:
+            options_df.rename(columns={'option_type': 'Type'}, inplace=True)
+        else:
+            options_df['Type'] = 'N/A' # Fallback if option_type not set
         st.dataframe(options_df, hide_index=True)
     else:
-        st.info("No Options signals generated yet or none met the ranking criteria. Run analysis to generate signals.")
+        st.info(f"No {st.session_state['signal_type_filter']} Options signals generated yet or none met the ranking criteria. Run analysis to generate signals.")
