@@ -23,6 +23,11 @@ class SignalValidator:
         
         logging.info(f"Fetching validation data for {symbol} on {validation_date.isoformat()} (original trade date: {trade_date})")
         
+        # Check if validation_date is in the future
+        if validation_date > datetime.now().date():
+            logging.warning(f"Validation date {validation_date} is in the future. Cannot fetch market data. Skipping.")
+            return None
+
         download_summary = fetch_stock_data([symbol], output_dir="data", start_date=validation_date, end_date=validation_date)
         if download_summary.get(symbol, {}).get("status") == "success":
             file_path = download_summary[symbol]["file"]

@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 class TradeSignalGenerator:
     def __init__(self, sentiment_threshold=0.5, momentum_strength_threshold=0.3, btst_target_percentage=0.01, learning_module=None,
-                 gap_threshold_percent=0.005, volume_spike_multiplier=1.5, bearish_score_threshold=-0.3,
+                 gap_threshold_percent=0.005, volume_spike_multiplier=1.5, bearish_score_threshold=0.4,
                  put_itm_delta=50, put_otm_delta=50,
                  btst_bearish_min_drop_pct=0.015, btst_bearish_close_to_low_pct=0.3,
                  btst_bearish_min_vol_multiple=1.2, btst_bearish_rsi_threshold=50):
@@ -167,6 +167,7 @@ class TradeSignalGenerator:
             reasons.append("Price below Support.")
 
 
+        logging.debug(f"Computed Bearish Score for {df.iloc[-1].name}: Raw Score={bearish_score:.2f}, Normalized Score={min(1.0, bearish_score / 1.3):.2f}, Reasons: {'; '.join(reasons)}")
         # Normalize score to be between 0 and 1
         return min(1.0, bearish_score / 1.3), reasons # Max possible score is around 1.3 (0.3*3 + 0.1*5 + 0.2)
 
@@ -229,9 +230,9 @@ class TradeSignalGenerator:
         if 'RSI' in row.index and row['RSI'] < self.btst_bearish_rsi_threshold:
             conditions_met.append(f"RSI Confirmation: RSI ({row['RSI']:.2f}) below {self.btst_bearish_rsi_threshold}.")
         
-        # A strong bearish signal should meet multiple conditions, e.g., at least 3
-        # The number 3 here is arbitrary and can be made configurable if needed.
-        if len(conditions_met) >= 3:
+        # A strong bearish signal should meet multiple conditions, e.g., at least 2
+        # The number 2 here is arbitrary and can be made configurable if needed.
+        if len(conditions_met) >= 2:
             logging.debug(f"Bearish BTST conditions met for {row.name}: {'; '.join(conditions_met)}")
             return True
         
@@ -389,6 +390,7 @@ class TradeSignalGenerator:
             # 2. Assess Technical Momentum (using new scoring functions)
             bullish_score, bullish_reasons = self._compute_bullish_score(df)
             bearish_score, bearish_reasons = self._compute_bearish_score(df)
+            logging.debug(f"Symbol: {symbol}, Bullish Score: {bullish_score:.2f} ({', '.join(bullish_reasons)}), Bearish Score: {bearish_score:.2f} ({', '.join(bearish_reasons)})")
 
             signal = None
             rationale = []
@@ -436,8 +438,12 @@ class TradeSignalGenerator:
                     logging.info(f"No BTST CALL signal for {symbol}: Sentiment ({overall_sentiment}, {sentiment_confidence:.2f}), Bullish Score ({bullish_score:.2f}), Bearish Score ({bearish_score:.2f}) not strong or clear enough, or bullish conditions not met.")
 
             if side == "PUT" or side == "BOTH":
+                # Evaluate bearish conditions separately for logging
+                bearish_conditions_met = self.btst_bearish_conditions(latest_data)
+                logging.debug(f"BTST PUT for {symbol}: Bearish conditions met: {bearish_conditions_met}")
+                
                 # If bearish factors significantly outweigh bullish factors AND bearish conditions are met
-                if self.btst_bearish_conditions(latest_data) and \
+                if bearish_conditions_met and \
                    overall_sentiment == "negative" and sentiment_confidence >= self.sentiment_threshold and \
                    bearish_score > self.bearish_score_threshold and bearish_score > bullish_score + 0.1: # Add a buffer
                     
@@ -459,7 +465,7 @@ class TradeSignalGenerator:
                         "timestamp": datetime.now().isoformat(),
                         "symbol": symbol,
                         "trade_type": "BTST",
-                        "action": "SELL", # Or "BUY PUT" - keeping "SELL" for consistency with shorting
+                        "action": "BUY PUT", # Changed to BUY PUT for clarity and consistency with options
                         "signal_type": "BTST_PUT", # Explicitly set signal type
                         "entry_price": round(entry_price, 2),
                         "target_price": round(target_price, 2),
@@ -476,7 +482,7 @@ class TradeSignalGenerator:
                     btst_signals.append(signal)
                     logging.info(f"Generated BTST BUY PUT signal for {symbol}.")
                 else:
-                    logging.info(f"No BTST PUT signal for {symbol}: Sentiment ({overall_sentiment}, {sentiment_confidence:.2f}), Bearish Score ({bearish_score:.2f}), Bullish Score ({bullish_score:.2f}) not strong or clear enough, or bearish conditions not met.")
+                    logging.info(f"No BTST PUT signal for {symbol}: Bearish conditions met: {bearish_conditions_met}. Sentiment ({overall_sentiment}, {sentiment_confidence:.2f}), Bearish Score ({bearish_score:.2f}), Bullish Score ({bullish_score:.2f}) not strong or clear enough, or bearish conditions not met.")
 
         self.signals.extend(btst_signals)
         return btst_signals
