@@ -7,3 +7,5 @@ torch
 transformers
 numpy
 schedule
+python-dotenv
+google-generativeai

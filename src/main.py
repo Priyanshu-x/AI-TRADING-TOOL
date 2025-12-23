@@ -25,6 +25,24 @@ import schedule
 import time
 from datetime import datetime, timedelta
 import logging
+from src.chatbot import AIChatbot
+
+
+def get_indicator_calculator_funcs():
+    from src.indicator_calculator import (
+        calculate_moving_averages,
+        calculate_atr,
+        calculate_volume_spikes,
+        find_swing_points,
+        detect_breakouts_breakdowns
+    )
+    return {
+        'calculate_moving_averages': calculate_moving_averages,
+        'calculate_atr': calculate_atr,
+        'calculate_volume_spikes': calculate_volume_spikes,
+        'find_swing_points': find_swing_points,
+        'detect_breakouts_breakdowns': detect_breakouts_breakdowns,
+    }
 from src.signal_database_manager import SignalDatabaseManager
 from src.market_timing_manager import MarketTimingManager
 from src.signal_validator import SignalValidator
@@ -263,7 +281,11 @@ def run_analysis(db_manager, market_manager, signal_validator, learning_module):
             else:
                 print(f"  No data available for {symbol}.")
     else:
-        print("No stock data processed for indicator reports.")
+        st.info("No stock data processed for indicator reports.")
+
+    # Update chatbot's data references after analysis
+    if 'chatbot' in st.session_state:
+        st.session_state['chatbot'].update_data_references(st.session_state['all_stocks_data'], st.session_state['news_df'])
 
     print("\nAI Trading Signal Tool finished successfully.")
 
@@ -351,11 +373,35 @@ if __name__ == "__main__":
     # For simplicity in this example, we'll just show the scheduled status.
     # In a real-world deployment, consider using a background task runner (e.g., Celery, APScheduler).
     st.sidebar.write("Note: Scheduled tasks require a persistent background process to run.")
-    
-    # Main content area
-    # Initialize WatchlistManager
+
+    # Initialize WatchlistManager (moved here to be available for chatbot)
     manager = WatchlistManager()
     if manager.load_watchlist() and manager.validate_watchlist():
+        # Chatbot Initialization
+        # We need an instance of TradeSignalGenerator to pass to the Chatbot
+        # For initial chatbot setup, we can pass a dummy/None if signals aren't needed immediately in chat.
+        # However, for full functionality, it needs the actual signal_generator.
+        # Let's re-initialize signal_generator here for main to use, and pass it to chatbot.
+        # The learning_module is already initialized.
+        signal_generator = TradeSignalGenerator(learning_module=learning_module)
+        indicator_calculator_funcs = get_indicator_calculator_funcs()
+
+        chatbot = AIChatbot(
+            db_manager=db_manager,
+            market_manager=market_manager,
+            signal_validator=signal_validator,
+            learning_module=learning_module,
+            watchlist_manager=manager,
+            news_scraper=NewsScraper(), # Create a new instance for the chatbot
+            data_fetcher_func=fetch_stock_data,
+            indicator_calculator_funcs=indicator_calculator_funcs,
+            trade_signal_generator=signal_generator
+        )
+
+        st.session_state['chatbot'] = chatbot
+        st.session_state['watchlist_manager'] = manager # Store manager in session state
+
+        # Main content area
         st.header("Current Watchlist")
         for index_name, stocks in manager.watchlist.items():
             st.subheader(f"{index_name} ({len(stocks)} stocks)")
@@ -366,6 +412,9 @@ if __name__ == "__main__":
                 st.write(f"No stocks in {index_name} list.")
     else:
         st.error("Failed to load or validate watchlist. Please check config file.")
+        # If watchlist fails, prevent further execution that relies on it
+        st.stop() # Stop the script execution here if critical components fail
+
 
     st.header("Latest News Sentiment")
     if 'news_df' in st.session_state and not st.session_state['news_df'].empty:
@@ -440,3 +489,26 @@ if __name__ == "__main__":
         st.dataframe(options_df, hide_index=True)
     else:
         st.info(f"No {st.session_state['signal_type_filter']} Options signals generated yet or none met the ranking criteria. Run analysis to generate signals.")
+
+    # Chatbot Interface
+    st.header("AI Chatbot")
+    if 'chatbot_messages' not in st.session_state:
+        st.session_state['chatbot_messages'] = []
+
+    for message in st.session_state['chatbot_messages']:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    if prompt := st.chat_input("Ask the AI about trading signals, market, or the tool:"):
+        st.session_state['chatbot_messages'].append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        with st.chat_message("assistant"):
+            # Ensure the chatbot is initialized and available
+            if 'chatbot' in st.session_state:
+                response = st.session_state['chatbot'].chat(prompt)
+                st.markdown(response)
+                st.session_state['chatbot_messages'].append({"role": "assistant", "content": response})
+            else:
+                st.error("Chatbot not initialized. Please refresh the page.")

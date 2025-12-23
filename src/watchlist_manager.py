@@ -103,6 +103,17 @@ class WatchlistManager:
             merged[stock['symbol']] = stock
         return list(merged.values())
 
+    def get_all_watchlist_tickers(self):
+        """
+        Returns a list of all unique stock symbols in the watchlist.
+        """
+        all_tickers = set()
+        for index_name, stocks in self.watchlist.items():
+            for stock in stocks:
+                if 'symbol' in stock:
+                    all_tickers.add(stock['symbol'])
+        return sorted(list(all_tickers))
+
 if __name__ == "__main__":
     manager = WatchlistManager()
     

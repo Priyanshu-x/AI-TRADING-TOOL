@@ -7,3 +7,4 @@ trade_signals.json
 ai_trading_tool/ai_trading_signal_tool
 signals.db
 test_signals_*.db
+.env
