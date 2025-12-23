@@ -14,7 +14,28 @@ class AIChatbot:
             raise ValueError("GEMINI_API_KEY not found. Please set the environment variable.")
         
         genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-pro')
+
+        log_file_path = os.path.join(os.path.dirname(__file__), "chatbot_debug_log.txt")
+
+        # Log available models to a file for debugging, as Streamlit might suppress console output
+        with open(log_file_path, "w") as f:
+            f.write("Available Gemini Models:\n")
+            for m in genai.list_models():
+                if "generateContent" in m.supported_generation_methods:
+                    f.write(f"- {m.name}\n")
+
+        # Try to use a more widely available model or fallback
+        try:
+            self.model = genai.GenerativeModel('gemini-2.5-flash') # Recommended fallback
+            with open(log_file_path, "a") as f:
+                f.write(f"Attempting to use Gemini Model: gemini-1.5-flash\n")
+        except Exception as e:
+            with open(log_file_path, "a") as f:
+                f.write(f"Error with gemini-1.5-flash: {e}. Falling back to gemini-pro.\n")
+            self.model = genai.GenerativeModel('gemini-pro') # Keep as fallback if 1.5-flash fails
+            
+        with open(log_file_path, "a") as f:
+            f.write(f"Using Gemini Model: {self.model.model_name}\n")
         self.chat_session = self.model.start_chat(history=[
             {"role": "user", "parts": ["You are an AI trading assistant. Provide information about trading signals, market updates, and stock suggestions based on the provided tools and data. Explain your reasoning clearly and concisely."]},
             {"role": "model", "parts": ["Understood. I will act as an AI trading assistant, providing insights based on available data and tools, explaining my reasoning for signals, market interpretations, and stock suggestions."]}

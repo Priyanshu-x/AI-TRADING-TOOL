@@ -386,20 +386,24 @@ if __name__ == "__main__":
         signal_generator = TradeSignalGenerator(learning_module=learning_module)
         indicator_calculator_funcs = get_indicator_calculator_funcs()
 
-        chatbot = AIChatbot(
-            db_manager=db_manager,
-            market_manager=market_manager,
-            signal_validator=signal_validator,
-            learning_module=learning_module,
-            watchlist_manager=manager,
-            news_scraper=NewsScraper(), # Create a new instance for the chatbot
-            data_fetcher_func=fetch_stock_data,
-            indicator_calculator_funcs=indicator_calculator_funcs,
-            trade_signal_generator=signal_generator
-        )
-
-        st.session_state['chatbot'] = chatbot
-        st.session_state['watchlist_manager'] = manager # Store manager in session state
+        try:
+            chatbot = AIChatbot(
+                db_manager=db_manager,
+                market_manager=market_manager,
+                signal_validator=signal_validator,
+                learning_module=learning_module,
+                watchlist_manager=manager,
+                news_scraper=NewsScraper(), # Create a new instance for the chatbot
+                data_fetcher_func=fetch_stock_data,
+                indicator_calculator_funcs=indicator_calculator_funcs,
+                trade_signal_generator=signal_generator
+            )
+            st.session_state['chatbot'] = chatbot
+            st.session_state['watchlist_manager'] = manager # Store manager in session state
+        except Exception as e:
+            st.error(f"Error initializing chatbot: {e}")
+            print(f"Error initializing chatbot: {e}")
+            st.stop() # Stop the script execution here if chatbot fails to initialize
 
         # Main content area
         st.header("Current Watchlist")
@@ -507,8 +511,12 @@ if __name__ == "__main__":
         with st.chat_message("assistant"):
             # Ensure the chatbot is initialized and available
             if 'chatbot' in st.session_state:
-                response = st.session_state['chatbot'].chat(prompt)
-                st.markdown(response)
-                st.session_state['chatbot_messages'].append({"role": "assistant", "content": response})
+                try:
+                    response = st.session_state['chatbot'].chat(prompt)
+                    st.markdown(response)
+                    st.session_state['chatbot_messages'].append({"role": "assistant", "content": response})
+                except Exception as e:
+                    st.error(f"Error during AI chat: {e}")
+                    print(f"Error during AI chat: {e}")
             else:
                 st.error("Chatbot not initialized. Please refresh the page.")
