@@ -112,11 +112,24 @@ class AIChatbot:
             return latest_data[['Close', 'SMA_20', 'SMA_50', 'SMA_200', 'ATR', 'Volume_Spike', 'Support', 'Resistance', 'Breakout', 'Breakdown']].to_json()
         return f"No indicator data available for {symbol}."
 
-    def _get_current_signals(self, signal_type=None):
+    def _get_current_signals(self, signal_type=None, min_confidence=0.0, max_risk=1.0):
         # Fetch validated signals from the database, including rationale
         signals = self.db_manager.get_all_validated_signals()
+        
+        # Apply filters
+        filtered_signals = []
+        for s in signals:
+            confidence = s.get('confidence_score', 0.0)
+            risk = s.get('risk_level', 0.5) # Assuming a default risk_level if not present
+
+            if confidence >= min_confidence and risk <= max_risk:
+                filtered_signals.append(s)
+        
+        signals = filtered_signals
+
         if signal_type:
             signals = [s for s in signals if s.get('trade_type', '').upper() == signal_type.upper() or s.get('signal_type', '').upper().startswith(signal_type.upper())]
+        
         
         if signals:
             formatted_signals = []
@@ -125,6 +138,8 @@ class AIChatbot:
                     formatted_signals.append(f"BTST {s['action']} | {s['symbol']} | Entry: {s['entry_price']} | Target: {s['target_price']} | Confidence: {s['confidence_score']:.2f} | Rationale: {s['rationale']}")
                 elif s['trade_type'] == 'OPTIONS':
                     formatted_signals.append(f"OPTIONS {s['action']} | {s['symbol']} | Strike: {s['strike_price']} | Expiry: {s['expiry_date']} | Confidence: {s['confidence_score']:.2f} | Rationale: {s['rationale']}")
+                elif s['trade_type'] == 'INTRADAY':
+                    formatted_signals.append(f"INTRADAY {s['action']} | {s['symbol']} | Entry: {s['entry_price']} | Target: {s['target_price']} | Confidence: {s['confidence_score']:.2f} | Rationale: {s['rationale']}")
             return "\n".join(formatted_signals)
         return "No current signals available."
 
@@ -222,19 +237,29 @@ class AIChatbot:
                     context += explanation
                 else:
                     context += f"No signals found for {symbol}.\n"
-        elif "current signals" in user_query.lower() or "latest signals" in user_query.lower():
+        elif "current signals" in user_query.lower() or "latest signals" in user_query.lower() or "intraday signals" in user_query.lower() or "options signals" in user_query.lower():
             signal_type = None
             if "btst" in user_query.lower():
                 signal_type = "BTST"
             elif "options" in user_query.lower():
                 signal_type = "OPTIONS"
-            context += f"Current Signals ({signal_type if signal_type else 'All'}):\n{self._get_current_signals(signal_type)}\n"
+            elif "intraday" in user_query.lower():
+                signal_type = "INTRADAY"
+            min_confidence = 0.0
+            max_risk = 1.0
+
+            if "high conviction only" in user_query.lower():
+                min_confidence = 0.8
+            if "low risk only" in user_query.lower():
+                max_risk = 0.3 # Assuming 0.3 as a threshold for low risk
+
+            context += f"Current Signals ({signal_type if signal_type else 'All'}, Min Confidence: {min_confidence}, Max Risk: {max_risk}):\n{self._get_current_signals(signal_type, min_confidence, max_risk)}\n"
         
         if "stock suggestions" in user_query.lower() or "recommendations" in user_query.lower():
             context += f"Stock Suggestions:\n{self._get_top_stock_suggestions(num_suggestions=5)}\n"
 
         full_query = f"Context: {context}\nUser Query: {user_query}" if context else user_query
-        
+
         try:
             response = self.chat_session.send_message(full_query)
             return response.text
@@ -247,9 +272,9 @@ if __name__ == "__main__":
     class MockDBManager:
         def get_all_validated_signals(self):
             return [
-                {"symbol": "MOCK.NS", "trade_type": "BTST", "signal_type": "BTST_CALL", "action": "BUY", "entry_price": 100.0, "target_price": 101.0, "confidence_score": 0.85, "rationale": "Price above SMA_20 and positive news."},
-                {"symbol": "TEST.NS", "trade_type": "OPTIONS", "action": "BUY PUT", "strike_price": 50.0, "expiry_date": "2025-01-01", "confidence_score": 0.70, "rationale": "High volatility and negative sentiment."}
-            ]
+                {"symbol": "MOCK.NS", "trade_type": "BTST", "signal_type": "BTST_CALL", "action": "BUY", "entry_price": 100.0, "target_price": 101.0, "confidence_score": 0.85, "risk_level": 0.2, "rationale": "Price above SMA_20 and positive news."},
+                {"symbol": "TEST.NS", "trade_type": "OPTIONS", "action": "BUY PUT", "strike_price": 50.0, "expiry_date": "2025-01-01", "confidence_score": 0.70, "risk_level": 0.6, "rationale": "High volatility and negative sentiment."},
+                {"symbol": "INTRADAY.NS", "trade_type": "INTRADAY", "signal_type": "INTRADAY_BUY", "action": "BUY", "entry_price": 200.0, "target_price": 202.0, "confidence_score": 0.92, "risk_level": 0.15, "rationale": "Strong intraday momentum."}            ]
 
     class MockMarketTimingManager:
         def get_current_market_time(self):

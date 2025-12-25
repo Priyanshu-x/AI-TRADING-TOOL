@@ -374,6 +374,31 @@ if __name__ == "__main__":
     # In a real-world deployment, consider using a background task runner (e.g., Celery, APScheduler).
     st.sidebar.write("Note: Scheduled tasks require a persistent background process to run.")
 
+    # How this works info tooltip
+    with st.sidebar.expander("How this works"):
+        st.markdown(
+            """
+            This AI Trading Signal Tool provides insights and trade signals based on various market data and indicators.
+
+            **Controls & Workflows:**
+
+            1.  **Watchlist Management:** Define your stocks in `config/config.yaml`. The tool loads and validates this list.
+            2.  **Data Fetching:** Historical stock data is fetched for all watchlist tickers.
+            3.  **Indicator Calculation:** Technical indicators (e.g., Moving Averages, ATR, Volume Spikes, Support/Resistance, Breakouts) are calculated from the fetched data.
+            4.  **News Scraping & Sentiment:** Latest news is scraped for watchlist stocks, and sentiment analysis is performed.
+            5.  **Signal Generation:** Based on technical indicators and news sentiment, BTST (Buy Today Sell Tomorrow) and Options trade signals are generated.
+            6.  **Top Recommendations:** Signals are ranked by confidence, and the top 'N' (configurable via slider) are displayed.
+            7.  **Scheduling:** You can run the analysis manually or schedule it for specific market times (Pre-Open, Open, Post-Close for validation).
+            8.  **Signal Validation & Learning:** After market close, generated signals are validated against actual market movements, and the AI's learning module updates its weights to improve future signal accuracy.
+            9.  **AI Chatbot:** Interact with the AI to ask questions about market data, signals, or the tool's functionality. The chatbot uses the latest processed data.
+
+            **Output:**
+
+            *   A daily report (`outputs/daily_signals_report_YYYY-MM-DD.txt`) summarizing top signals.
+            *   Signals are stored in a database for historical tracking and learning.
+            """
+        )
+
     # Initialize WatchlistManager (moved here to be available for chatbot)
     manager = WatchlistManager()
     if manager.load_watchlist() and manager.validate_watchlist():
