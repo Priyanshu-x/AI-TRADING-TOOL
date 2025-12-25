@@ -2,9 +2,10 @@ data/
 outputs/
 ai_trading_signal_tool/
 ai_trading_signal_tool/outputs/
-news_headlines.csv
+outputs/news_headlines.csv
 trade_signals.json
 ai_trading_tool/ai_trading_signal_tool
 signals.db
 test_signals_*.db
+src\__pycache__
 .env
