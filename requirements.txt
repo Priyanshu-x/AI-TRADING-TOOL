@@ -1,11 +1,16 @@
-streamlit
-pandas
-requests
-beautifulsoup4
-pyyaml
-torch
-transformers
-numpy
-schedule
-python-dotenv
-google-generativeai
+streamlit==1.32.2
+pandas==2.2.1
+requests==2.31.0
+beautifulsoup4==4.12.3
+pyyaml==6.0.1
+torch>=2.2.0 --index-url https://download.pytorch.org/whl/cpu
+transformers==4.38.2
+numpy==1.26.4
+schedule==1.2.1
+python-dotenv==1.0.1
+google-generativeai==0.4.1
+
+# Dev Dependencies
+pytest==8.1.1
+black==24.3.0
+plotly==5.20.0

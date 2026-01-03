@@ -27,13 +27,13 @@ def detect_breakouts_breakdowns(df):
     df['Breakdown'] = (df['Close'] < df['Support'].shift(1)) & (df['Close'].shift(1) >= df['Support'].shift(1))
     return df
 
-def find_swing_points(df, window=10):
+def find_swing_points(df, window=20):
     """
-    Identifies swing highs and swing lows as potential support and resistance levels.
-    Adds 'Support' and 'Resistance' columns to the DataFrame.
+    Identifies support (min low) and resistance (max high) over a trailing window.
+    Logic matches Donchian Channel.
     """
-    df['Support'] = df['Low'].rolling(window=window, center=True).min()
-    df['Resistance'] = df['High'].rolling(window=window, center=True).max()
+    df['Support'] = df['Low'].rolling(window=window).min()
+    df['Resistance'] = df['High'].rolling(window=window).max()
     return df
 
 def calculate_atr(df, period=14):

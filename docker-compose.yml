@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: ai_trading_tool
+    ports:
+      - "8501:8501"
+    volumes:
+      # Mount the current directory (including code changes) to /app in the container
+      - .:/app
+      # Avoid mounting local virtual environments or cache
+      - /app/__pycache__
+      - /app/.venv
+    env_file:
+      - .env
+    restart: unless-stopped
+    # Optional: healthcheck
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

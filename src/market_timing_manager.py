@@ -1,8 +1,8 @@
 import datetime
 import pytz
-import logging
+from .logger import setup_logger
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = setup_logger(__name__)
 
 class MarketTimingManager:
     def __init__(self, market_timezone='Asia/Calcutta'):
@@ -33,18 +33,18 @@ class MarketTimingManager:
         now = self.get_current_market_time()
         
         if self.is_holiday(now.date()):
-            logging.info(f"Market is closed: Today ({now.date()}) is a holiday.")
+            logger.info(f"Market is closed: Today ({now.date()}) is a holiday.")
             return False
         
         if now.weekday() >= 5: # Saturday or Sunday
-            logging.info(f"Market is closed: Today ({now.date()}) is a weekend.")
+            logger.info(f"Market is closed: Today ({now.date()}) is a weekend.")
             return False
 
         if self.market_open_time <= now.time() <= self.market_close_time:
-            logging.info(f"Market is open: Current time {now.time()} is within {self.market_open_time}-{self.market_close_time}.")
+            logger.info(f"Market is open: Current time {now.time()} is within {self.market_open_time}-{self.market_close_time}.")
             return True
         else:
-            logging.info(f"Market is closed: Current time {now.time()} is outside {self.market_open_time}-{self.market_close_time}.")
+            logger.info(f"Market is closed: Current time {now.time()} is outside {self.market_open_time}-{self.market_close_time}.")
             return False
 
     def is_market_closed_for_day(self):
@@ -60,10 +60,10 @@ class MarketTimingManager:
 
         # Market is closed for the day if current time is after market close
         if now.time() > self.market_close_time:
-            logging.info(f"Market is closed for the day: Current time {now.time()} is after {self.market_close_time}.")
+            logger.info(f"Market is closed for the day: Current time {now.time()} is after {self.market_close_time}.")
             return True
         
-        logging.info(f"Market is not yet closed for the day: Current time {now.time()}.")
+        logger.info(f"Market is not yet closed for the day: Current time {now.time()}.")
         return False
 
     def is_holiday(self, date_to_check):
@@ -71,7 +71,7 @@ class MarketTimingManager:
         # In a real application, this would fetch from an API or a more robust list
         is_a_holiday = date_to_check in self.holidays
         if is_a_holiday:
-            logging.info(f"Date {date_to_check} is a market holiday.")
+            logger.info(f"Date {date_to_check} is a market holiday.")
         return is_a_holiday
 
     def get_next_trading_day(self, current_date):

@@ -5,63 +5,75 @@ import os
 import logging
 from .watchlist_manager import WatchlistManager
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from .logger import setup_logger
+
+logger = setup_logger(__name__)
+
+def fetch_single_ticker(ticker, start_date, end_date, output_dir):
+    """
+    Helper function to fetch data for a single ticker.
+    """
+    import yfinance as yf # Import locally to avoid potential threading issues with some libs
+    try:
+        logger.info(f"Fetching data for {ticker} from {start_date} to {end_date}")
+        data = yf.download(ticker, start=start_date, end=end_date, progress=False, threads=False) # threads=False since we handle threading
+
+        if data.empty:
+            logger.warning(f"No data found for {ticker}")
+            return ticker, {"status": "failed", "records": 0, "reason": "No data found"}
+
+        file_path = os.path.join(output_dir, f"{ticker}_data.csv")
+        data = data.reset_index()
+        data.rename(columns={'index': 'Date'}, inplace=True)
+        data.to_csv(file_path, index=False)
+        logger.info(f"Downloaded {len(data)} records for {ticker}")
+        return ticker, {"status": "success", "records": len(data), "file": file_path}
+
+    except Exception as e:
+        logger.error(f"Failed to download {ticker}: {e}")
+        return ticker, {"status": "failed", "records": 0, "reason": str(e)}
 
 def fetch_stock_data(tickers, output_dir="data", start_date=None, end_date=None):
     """
     Fetches live and historical price/volume data for a list of stock tickers
-    using yfinance and stores it in CSV files.
-
-    Args:
-        tickers (list): A list of stock ticker symbols (e.g., ["AAPL", "MSFT"]).
-        output_dir (str): The directory to save the CSV files. Defaults to "data".
-
-    Returns:
-        dict: A summary of downloaded records for each stock, including success/failure status.
+    concurrently using ThreadPoolExecutor.
     """
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-        logging.info(f"Created output directory: {output_dir}")
+        logger.info(f"Created output directory: {output_dir}")
 
-    summary = {}
-    # Default date range if not provided
+    # Defaults
     if end_date is None:
         end_date = datetime.now()
     if start_date is None:
-        start_date = end_date - timedelta(days=365) # Fetch 1 year of data by default
+        start_date = end_date - timedelta(days=365)
     
-    # Ensure dates are in datetime.date format if they are datetimes
-    if isinstance(start_date, datetime):
-        start_date = start_date.date()
-    if isinstance(end_date, datetime):
-        end_date = end_date.date()
+    # Ensure date objects
+    if isinstance(start_date, datetime): start_date = start_date.date()
+    if isinstance(end_date, datetime): end_date = end_date.date()
 
-    for ticker in tickers:
-        try:
-            logging.info(f"Fetching data for {ticker} from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}")
-            # Download data
-            data = yf.download(ticker, start=start_date, end=end_date)
+    summary = {}
+    max_workers = min(10, len(tickers)) # Limit threads to 10 or number of tickers
 
-            if data.empty:
-                logging.warning(f"No data found for {ticker} for the requested date range. Skipping.")
-                summary[ticker] = {"status": "failed", "records": 0, "reason": "No data found"}
-                continue
-
-            file_path = os.path.join(output_dir, f"{ticker}_data.csv")
-            data = data.reset_index() # Converts the index (Dates) into a column
-            data.rename(columns={'index': 'Date'}, inplace=True) # Renames the new column to 'Date'
-            data.to_csv(file_path, index=False) # Do NOT write the DataFrame index again, as 'Date' is now a regular column
-            logging.info(f"Successfully downloaded {len(data)} records for {ticker} to {file_path}")
-            summary[ticker] = {"status": "success", "records": len(data), "file": file_path}
-
-        except Exception as e:
-            logging.error(f"Failed to download data for {ticker}: {e}")
-            summary[ticker] = {"status": "failed", "records": 0, "reason": str(e)}
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_ticker = {
+            executor.submit(fetch_single_ticker, ticker, start_date, end_date, output_dir): ticker
+            for ticker in tickers
+        }
+        
+        for future in as_completed(future_to_ticker):
+            ticker = future_to_ticker[future]
+            try:
+                t, result = future.result()
+                summary[t] = result
+            except Exception as e:
+                logger.error(f"Exception for {ticker}: {e}")
+                summary[ticker] = {"status": "failed", "records": 0, "reason": str(e)}
     
     return summary
 
-def get_all_watchlist_tickers(config_path='../config/config.yaml'):
+def get_all_watchlist_tickers(config_path=None):
     """
     Loads the watchlist using WatchlistManager and returns a flattened list of all ticker symbols.
     """

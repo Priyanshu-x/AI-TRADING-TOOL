@@ -209,6 +209,64 @@ class SignalDatabaseManager:
                 conn.close()
         return validated_signals
 
+    # --- Paper Trading Methods ---
+
+    def save_order(self, order_data):
+        """Saves a new order or updates an existing one."""
+        conn = None
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            # Check if order exists
+            cursor.execute("SELECT id FROM orders WHERE order_id = ?", (order_data['order_id'],))
+            existing = cursor.fetchone()
+            
+            if existing: # Update
+                cursor.execute("""
+                    UPDATE orders SET 
+                        exit_price = ?, status = ?, pnl = ?, exit_timestamp = ?
+                    WHERE order_id = ?
+                """, (
+                    order_data.get('exit_price'), order_data.get('status'), 
+                    order_data.get('pnl'), order_data.get('exit_timestamp'),
+                    order_data['order_id']
+                ))
+            else: # Insert
+                cursor.execute("""
+                    INSERT INTO orders (
+                        order_id, symbol, trade_type, action, quantity, entry_price, 
+                        status, pnl, timestamp, strategy_ref
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    order_data['order_id'], order_data['symbol'], order_data['trade_type'],
+                    order_data['action'], order_data['quantity'], order_data['entry_price'],
+                    order_data['status'], 0.0, order_data['timestamp'], order_data.get('strategy_ref')
+                ))
+            
+            conn.commit()
+            logging.info(f"Order saved/updated: {order_data['order_id']}")
+        except sqlite3.Error as e:
+            logging.error(f"Error saving order: {e}")
+        finally:
+            if conn: conn.close()
+            
+    def get_open_orders(self):
+        """Fetches all OPEN orders."""
+        conn = None
+        orders = []
+        try:
+            conn = sqlite3.connect(self.db_path)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM orders WHERE status = 'OPEN'")
+            orders = [dict(row) for row in cursor.fetchall()]
+        except sqlite3.Error as e:
+            logging.error(f"Error fetching open orders: {e}")
+        finally:
+            if conn: conn.close()
+        return orders
+
 if __name__ == "__main__":
     # Example Usage:
     db_manager = SignalDatabaseManager(db_path="test_signals.db")

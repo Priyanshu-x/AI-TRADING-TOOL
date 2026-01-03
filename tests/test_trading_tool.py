@@ -253,9 +253,10 @@ class TestSignalValidator(unittest.TestCase):
 
     @patch('src.signal_validator.fetch_stock_data', side_effect=mock_fetch_stock_data)
     def test_validate_btst_buy_signal(self, mock_fetch):
-        trade_date = (datetime.now().date() - timedelta(days=1)).strftime("%Y-%m-%d")
+        # Use a fixed past date to avoid "future date" validation errors
+        trade_date = "2024-01-01" # A Monday
         signal = {
-            "timestamp": (datetime.now() - timedelta(days=1)).isoformat(),
+            "timestamp": "2024-01-01T10:00:00",
             "symbol": "TCS.NS",
             "trade_type": "BTST",
             "action": "BUY",
@@ -278,15 +279,16 @@ class TestSignalValidator(unittest.TestCase):
 
     @patch('src.signal_validator.fetch_stock_data', side_effect=mock_fetch_stock_data)
     def test_validate_options_buy_call_signal(self, mock_fetch):
-        trade_date = (datetime.now().date() - timedelta(days=1)).strftime("%Y-%m-%d")
+        # Use a fixed past date
+        trade_date = "2024-01-01" # A Monday
         signal = {
-            "timestamp": (datetime.now() - timedelta(days=1)).isoformat(),
+            "timestamp": "2024-01-01T10:00:00",
             "symbol": "RELIANCE.NS",
             "trade_type": "OPTIONS",
             "action": "BUY CALL",
             "entry_price": 2000.00, # Entry price of underlying
             "strike_price": 2010.00,
-            "expiry_date": (datetime.now().date() + timedelta(days=30)).isoformat(),
+            "expiry_date": "2024-01-25",
             "confidence_score": 0.7,
             "rationale": "Test OPTIONS BUY CALL"
         }

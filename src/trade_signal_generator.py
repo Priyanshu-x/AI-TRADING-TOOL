@@ -4,10 +4,10 @@ import pandas as pd
 from datetime import datetime, timedelta
 import json
 import os
-import logging
 from .self_learning_module import SelfLearningModule
+from .logger import setup_logger
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = setup_logger(__name__)
 
 class TradeSignalGenerator:
     def __init__(self, sentiment_threshold=0.5, momentum_strength_threshold=0.3, btst_target_percentage=0.01, learning_module=None,
@@ -167,7 +167,7 @@ class TradeSignalGenerator:
             reasons.append("Price below Support.")
 
 
-        logging.debug(f"Computed Bearish Score for {df.iloc[-1].name}: Raw Score={bearish_score:.2f}, Normalized Score={min(1.0, bearish_score / 1.3):.2f}, Reasons: {'; '.join(reasons)}")
+        logger.debug(f"Computed Bearish Score for {df.iloc[-1].name}: Raw Score={bearish_score:.2f}, Normalized Score={min(1.0, bearish_score / 1.3):.2f}, Reasons: {'; '.join(reasons)}")
         # Normalize score to be between 0 and 1
         return min(1.0, bearish_score / 1.3), reasons # Max possible score is around 1.3 (0.3*3 + 0.1*5 + 0.2)
 
@@ -198,7 +198,7 @@ class TradeSignalGenerator:
         # Ensure required data exists
         required_cols = ['Open', 'High', 'Low', 'Close', 'Volume', 'Prev_Close', 'Prev_Volume', 'SMA_20', 'SMA_50', 'RSI']
         if not all(col in row.index for col in required_cols):
-            logging.debug(f"Missing required columns for bearish BTST conditions in row: {set(required_cols) - set(row.index)}")
+            logger.debug(f"Missing required columns for bearish BTST conditions in row: {set(required_cols) - set(row.index)}")
             return False
 
         conditions_met = []
@@ -233,10 +233,10 @@ class TradeSignalGenerator:
         # A strong bearish signal should meet multiple conditions, e.g., at least 2
         # The number 2 here is arbitrary and can be made configurable if needed.
         if len(conditions_met) >= 2:
-            logging.debug(f"Bearish BTST conditions met for {row.name}: {'; '.join(conditions_met)}")
+            logger.debug(f"Bearish BTST conditions met for {row.name}: {'; '.join(conditions_met)}")
             return True
         
-        logging.debug(f"Bearish BTST conditions NOT met for {row.name}. Met {len(conditions_met)} conditions: {'; '.join(conditions_met)}")
+        logger.debug(f"Bearish BTST conditions NOT met for {row.name}. Met {len(conditions_met)} conditions: {'; '.join(conditions_met)}")
         return False
 
     def is_bearish_gapdown(self, df):
@@ -336,22 +336,33 @@ class TradeSignalGenerator:
                 return False, "Breakdown detected, but volume not strong enough."
         return False, "No significant support breakdown."
 
-    def decide_signal_type(self, bullish_score, bearish_score, sentiment_confidence):
+    def decide_signal_type(self, bullish_score, bearish_score, sentiment_confidence, overall_sentiment="neutral"):
         """
         Decides whether to generate a CALL, PUT, or no signal based on bullish/bearish scores and sentiment.
+        Allows strong technicals to override weak/missing sentiment.
         """
         # Threshold for a signal to be considered strong enough
-        SIGNAL_STRENGTH_THRESHOLD = 0.4 # Can be adjusted
-        SCORE_DIFFERENCE_THRESHOLD = 0.1 # How much one score must exceed the other
+        SIGNAL_STRENGTH_THRESHOLD = 0.4 
+        # Threshold for STRONG technicals to override missing sentiment
+        STRONG_TECH_THRESHOLD = 0.6
+        SCORE_DIFFERENCE_THRESHOLD = 0.1 
 
-        # If positive sentiment and bullish score is strong and outweighs bearish score
-        if sentiment_confidence >= self.sentiment_threshold and bullish_score > SIGNAL_STRENGTH_THRESHOLD and \
-           bullish_score > bearish_score + SCORE_DIFFERENCE_THRESHOLD:
+        # CALL Signal Logic
+        # Case 1: Positive Sentiment + Good Technicals
+        if overall_sentiment == "positive" and sentiment_confidence >= self.sentiment_threshold and \
+           bullish_score > SIGNAL_STRENGTH_THRESHOLD and bullish_score > bearish_score + SCORE_DIFFERENCE_THRESHOLD:
             return "CALL"
+        # Case 2: Strong Technicals (ignore sentiment if neutral)
+        elif bullish_score > STRONG_TECH_THRESHOLD and bullish_score > bearish_score + SCORE_DIFFERENCE_THRESHOLD:
+             return "CALL"
         
-        # If negative sentiment and bearish score is strong and outweighs bullish score
-        elif sentiment_confidence >= self.sentiment_threshold and bearish_score > SIGNAL_STRENGTH_THRESHOLD and \
-             bearish_score > bullish_score + SCORE_DIFFERENCE_THRESHOLD:
+        # PUT Signal Logic
+        # Case 1: Negative Sentiment + Good Technicals
+        if overall_sentiment == "negative" and sentiment_confidence >= self.sentiment_threshold and \
+             bearish_score > SIGNAL_STRENGTH_THRESHOLD and bearish_score > bullish_score + SCORE_DIFFERENCE_THRESHOLD:
+            return "PUT"
+        # Case 2: Strong Technicals (ignore sentiment if neutral)
+        elif bearish_score > STRONG_TECH_THRESHOLD and bearish_score > bullish_score + SCORE_DIFFERENCE_THRESHOLD:
             return "PUT"
         
         return None
@@ -361,12 +372,12 @@ class TradeSignalGenerator:
         Generates Buy Today, Sell Tomorrow (BTST) trade signals for a specified side (CALL/PUT/BOTH).
         Signals are generated if news sentiment is strong and technicals confirm momentum.
         """
-        logging.info(f"Generating BTST signals for side: {side}...")
+        logger.info(f"Generating BTST signals for side: {side}...")
         btst_signals = []
 
         for symbol, df in all_stocks_data.items():
             if df.empty or len(df) < 20: # Ensure enough data for indicators
-                logging.warning(f"Skipping BTST signal generation for {symbol}: Insufficient data.")
+                logger.warning(f"Skipping BTST signal generation for {symbol}: Insufficient data.")
                 continue
 
             latest_data = df.iloc[-1]
@@ -390,21 +401,30 @@ class TradeSignalGenerator:
             # 2. Assess Technical Momentum (using new scoring functions)
             bullish_score, bullish_reasons = self._compute_bullish_score(df)
             bearish_score, bearish_reasons = self._compute_bearish_score(df)
-            logging.debug(f"Symbol: {symbol}, Bullish Score: {bullish_score:.2f} ({', '.join(bullish_reasons)}), Bearish Score: {bearish_score:.2f} ({', '.join(bearish_reasons)})")
+            logger.debug(f"Symbol: {symbol}, Bullish Score: {bullish_score:.2f} ({', '.join(bullish_reasons)}), Bearish Score: {bearish_score:.2f} ({', '.join(bearish_reasons)})")
 
             signal = None
             rationale = []
 
             # Decision logic for BTST signals
             if side == "CALL" or side == "BOTH":
-                # If bullish factors significantly outweigh bearish factors AND bullish conditions are met
-                if overall_sentiment == "positive" and sentiment_confidence >= self.sentiment_threshold and \
-                   bullish_score > self.momentum_strength_threshold and bullish_score > bearish_score + 0.1: # Add a buffer
+                # Condition A: Sentiment Support + Decent Technicals
+                cond_sentiment_call = (overall_sentiment == "positive" and sentiment_confidence >= self.sentiment_threshold and \
+                                       bullish_score > self.momentum_strength_threshold)
+                
+                # Condition B: Strong Technicals (override sentiment)
+                cond_strong_tech_call = (bullish_score > 0.6)
+
+                if (cond_sentiment_call or cond_strong_tech_call) and bullish_score > bearish_score + 0.1:
                     
                     entry_price = latest_data['Close']
                     target_price = entry_price * (1 + self.btst_target_percentage)
                     
-                    rationale.append(f"Strong positive news sentiment (confidence: {sentiment_confidence:.2f}).")
+                    if cond_sentiment_call:
+                        rationale.append(f"Strong positive news sentiment (confidence: {sentiment_confidence:.2f}).")
+                    else:
+                        rationale.append("Strong Bullish Technicals (Sentiment Neutral/Ignored).")
+
                     rationale.append(f"Bullish technical score: {bullish_score:.2f}.")
                     rationale.extend(bullish_reasons)
                     rationale.append(f"Bearish technical score: {bearish_score:.2f}.")
@@ -433,25 +453,33 @@ class TradeSignalGenerator:
                     if self.learning_module:
                         signal['confidence_score'] = self.learning_module.get_adjusted_confidence(signal)
                     btst_signals.append(signal)
-                    logging.info(f"Generated BTST BUY CALL signal for {symbol}.")
+                    logger.info(f"Generated BTST BUY CALL signal for {symbol}.")
                 else:
-                    logging.info(f"No BTST CALL signal for {symbol}: Sentiment ({overall_sentiment}, {sentiment_confidence:.2f}), Bullish Score ({bullish_score:.2f}), Bearish Score ({bearish_score:.2f}) not strong or clear enough, or bullish conditions not met.")
+                    logger.info(f"No BTST CALL signal for {symbol}: Sentiment ({overall_sentiment}, {sentiment_confidence:.2f}), Bullish Score ({bullish_score:.2f}), Bearish Score ({bearish_score:.2f}) not strong or clear enough, or bullish conditions not met.")
 
             if side == "PUT" or side == "BOTH":
                 # Evaluate bearish conditions separately for logging
                 bearish_conditions_met = self.btst_bearish_conditions(latest_data)
-                logging.debug(f"BTST PUT for {symbol}: Bearish conditions met: {bearish_conditions_met}")
+                logger.debug(f"BTST PUT for {symbol}: Bearish conditions met: {bearish_conditions_met}")
                 
-                # If bearish factors significantly outweigh bullish factors AND bearish conditions are met
-                if bearish_conditions_met and \
-                   overall_sentiment == "negative" and sentiment_confidence >= self.sentiment_threshold and \
-                   bearish_score > self.bearish_score_threshold and bearish_score > bullish_score + 0.1: # Add a buffer
+                # Condition A: Sentiment Support + Decent Technicals + Bearish Conditions
+                cond_sentiment_put = (overall_sentiment == "negative" and sentiment_confidence >= self.sentiment_threshold and \
+                                      bearish_score > self.bearish_score_threshold)
+                
+                # Condition B: Strong Technicals + Bearish Conditions (override sentiment)
+                cond_strong_tech_put = (bearish_score > 0.6)
+
+                if bearish_conditions_met and (cond_sentiment_put or cond_strong_tech_put) and bearish_score > bullish_score + 0.1:
                     
                     entry_price = latest_data['Close']
                     target_price = entry_price * (1 - self.btst_target_percentage) # Target lower for sell
                     
-                    rationale = [] # Reset rationale for PUT signal
-                    rationale.append(f"Strong negative news sentiment (confidence: {sentiment_confidence:.2f}).")
+                    
+                    if cond_sentiment_put:
+                         rationale.append(f"Strong negative news sentiment (confidence: {sentiment_confidence:.2f}).")
+                    else:
+                         rationale.append("Strong Bearish Technicals (Sentiment Neutral/Ignored).")
+                    
                     rationale.append(f"Bearish technical score: {bearish_score:.2f}.")
                     rationale.extend(bearish_reasons)
                     rationale.append(f"Bullish technical score: {bullish_score:.2f}.") # Include for transparency
@@ -480,9 +508,9 @@ class TradeSignalGenerator:
                     if self.learning_module:
                         signal['confidence_score'] = self.learning_module.get_adjusted_confidence(signal)
                     btst_signals.append(signal)
-                    logging.info(f"Generated BTST BUY PUT signal for {symbol}.")
+                    logger.info(f"Generated BTST BUY PUT signal for {symbol}.")
                 else:
-                    logging.info(f"No BTST PUT signal for {symbol}: Bearish conditions met: {bearish_conditions_met}. Sentiment ({overall_sentiment}, {sentiment_confidence:.2f}), Bearish Score ({bearish_score:.2f}), Bullish Score ({bullish_score:.2f}) not strong or clear enough, or bearish conditions not met.")
+                    logger.info(f"No BTST PUT signal for {symbol}: Bearish conditions met: {bearish_conditions_met}. Sentiment ({overall_sentiment}, {sentiment_confidence:.2f}), Bearish Score ({bearish_score:.2f}), Bullish Score ({bullish_score:.2f}) not strong or clear enough, or bearish conditions not met.")
 
         self.signals.extend(btst_signals)
         return btst_signals
@@ -523,12 +551,12 @@ class TradeSignalGenerator:
         """
         Generates CALL/PUT options signals for stocks with high predicted volatility at market open.
         """
-        logging.info("Generating Options signals...")
+        logger.info("Generating Options signals...")
         options_signals = []
 
         for symbol, df in all_stocks_data.items():
             if df.empty or len(df) < 14: # ATR needs at least 14 periods
-                logging.warning(f"Skipping Options signal generation for {symbol}: Insufficient data.")
+                logger.warning(f"Skipping Options signal generation for {symbol}: Insufficient data.")
                 continue
 
             latest_data = df.iloc[-1]
@@ -536,7 +564,7 @@ class TradeSignalGenerator:
             # 1. Assess Volatility (using ATR)
             atr = latest_data['ATR']
             if pd.isna(atr):
-                logging.warning(f"Skipping Options signal generation for {symbol}: ATR not available.")
+                logger.warning(f"Skipping Options signal generation for {symbol}: ATR not available.")
                 continue
 
             # Define "high predicted volatility" - e.g., ATR is high relative to price or a fixed threshold
@@ -545,7 +573,7 @@ class TradeSignalGenerator:
             is_high_volatility = atr > (latest_data['Close'] * high_volatility_threshold_ratio)
 
             if not is_high_volatility:
-                logging.info(f"Skipping Options signal for {symbol}: Volatility (ATR: {atr:.2f}) not high enough (Close: {latest_data['Close']:.2f}).")
+                logger.info(f"Skipping Options signal for {symbol}: Volatility (ATR: {atr:.2f}) not high enough (Close: {latest_data['Close']:.2f}).")
                 continue
 
             # 2. Assess Sentiment for direction
@@ -558,7 +586,7 @@ class TradeSignalGenerator:
             bearish_score, bearish_reasons = self._compute_bearish_score(df)
 
             # 4. Decide signal type (CALL/PUT/None)
-            signal_type = self.decide_signal_type(bullish_score, bearish_score, sentiment_confidence)
+            signal_type = self.decide_signal_type(bullish_score, bearish_score, sentiment_confidence, overall_sentiment)
 
             signal = None
             rationale = []
@@ -571,7 +599,11 @@ class TradeSignalGenerator:
                 strike_price = self.select_option_strike(latest_data['Close'], "CALL", risk_profile="OTM") # Example: OTM for options
                 
                 rationale.append(f"High predicted volatility (ATR: {atr:.2f}).")
-                rationale.append(f"Strong positive news sentiment (confidence: {sentiment_confidence:.2f}).")
+                if overall_sentiment == "positive":
+                    rationale.append(f"Strong positive news sentiment (confidence: {sentiment_confidence:.2f}).")
+                else:
+                    rationale.append("Strong Bullish Technicals.")
+
                 rationale.append(f"Bullish technical score: {bullish_score:.2f}.")
                 rationale.extend(bullish_reasons)
                 rationale.append(f"Bearish technical score: {bearish_score:.2f}.") # Include for transparency
@@ -592,7 +624,7 @@ class TradeSignalGenerator:
                 if self.learning_module:
                     signal['confidence_score'] = self.learning_module.get_adjusted_confidence(signal)
                 options_signals.append(signal)
-                logging.info(f"Generated OPTIONS BUY CALL signal for {symbol}.")
+                logger.info(f"Generated OPTIONS BUY CALL signal for {symbol}.")
 
             elif signal_type == "PUT":
                 action = "BUY PUT"
@@ -600,7 +632,11 @@ class TradeSignalGenerator:
                 strike_price = self.select_option_strike(latest_data['Close'], "PUT", risk_profile="ATM") # Example: ATM for options
                 
                 rationale.append(f"High predicted volatility (ATR: {atr:.2f}).")
-                rationale.append(f"Strong negative news sentiment (confidence: {sentiment_confidence:.2f}).")
+                if overall_sentiment == "negative":
+                    rationale.append(f"Strong negative news sentiment (confidence: {sentiment_confidence:.2f}).")
+                else:
+                    rationale.append("Strong Bearish Technicals.")
+
                 rationale.append(f"Bearish technical score: {bearish_score:.2f}.")
                 rationale.extend(bearish_reasons)
                 rationale.append(f"Bullish technical score: {bullish_score:.2f}.") # Include for transparency
@@ -621,9 +657,9 @@ class TradeSignalGenerator:
                 if self.learning_module:
                     signal['confidence_score'] = self.learning_module.get_adjusted_confidence(signal)
                 options_signals.append(signal)
-                logging.info(f"Generated OPTIONS BUY PUT signal for {symbol}.")
+                logger.info(f"Generated OPTIONS BUY PUT signal for {symbol}.")
             else:
-                logging.info(f"No Options signal for {symbol}: Volatility high, but no clear CALL or PUT signal based on scores.")
+                logger.info(f"No Options signal for {symbol}: Volatility high, but no clear CALL or PUT signal based on scores.")
 
         self.signals.extend(options_signals)
         return options_signals
@@ -652,9 +688,9 @@ class TradeSignalGenerator:
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, 'w') as f:
                 json.dump(self.signals, f, indent=4)
-            logging.info(f"All generated signals saved to {filename}")
+            logger.info(f"All generated signals saved to {filename}")
         else:
-            logging.info("No signals to save.")
+            logger.info("No signals to save.")
 
     def get_all_signals(self):
         """Returns all generated signals."""

@@ -1,41 +1,76 @@
-# AI-Powered Trading Signal Tool
+# AI Trading Signal Tool (Advanced)
 
-## Project Goals
-This tool aims to provide actionable trading signals for Indian stock options (Nifty 50 and BankNifty stocks) by leveraging AI.
+## Overview
+This is an **Industry-Level AI Trading Application** designed for the Indian Stock Market (NSE).
+It provides:
+1.  **Live Signals**: Real-time analysis of stocks using Technicals (Breakouts, moving averages) and News Sentiment.
+2.  **Interactive Dashboard**: A Streamlit UI with Live Monitoring, Charts, and Risk Management.
+3.  **Backtesting**: Validate strategies on historical data before trading.
+4.  **Paper Trading**: Simulate live trades with a virtual portfolio (Forward Testing).
 
-Key features include:
-- Recommending BTST (Buy Today, Sell Tomorrow) trades just before market close.
-- Suggesting options calls/puts at market open, targeting high-volatility stocks.
-- Utilizing both news sentiment analysis and technical analysis for signal generation.
-- Outputting signals in a dashboard or console for easy consumption.
+## Features
+-   **Multi-Strategy**: Supports **BTST** (Buy Today Sell Tomorrow) and **Options** (Call/Put) strategies.
+-   **News Sentiment**: Scrapes Google News to "filter" signals (e.g., only Buy if sentiment is Positive).
+-   **Risk Manager**: accurate Position Sizing calculator based on your account size and risk tolerance.
+-   **Vectorized Backtester**: High-performance engine to test strategies over years of data.
+-   **Virtual Portfolio**: Track cash, open positions, and P&L in a simulated environment.
 
-## Setup Steps
-1. Clone this repository.
-2. Navigate to the project directory: `cd ai_trading_signal_tool`
-3. Install dependencies: `pip install -r requirements.txt`
-4. Configure your watchlist and other settings in `config/config.yaml`.
+## Installation
 
-## Updating Watchlist
-The tool can automatically fetch and update the Nifty 50 and Bank Nifty stock lists from the NSE India website.
+### Prerequisites
+-   Python 3.10+
+-   Git
 
-To update the watchlist:
-1. Run the `watchlist_manager.py` script directly:
-   `python watchlist_manager.py`
-   This will fetch the latest constituents, merge them with existing ones (avoiding duplicates), and save the updated list to `config/config.yaml`.
+### Setup
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/yourusername/ai-trading-tool.git
+    cd ai-trading-tool
+    ```
 
-**Manual Update:**
-If automatic scraping fails due to connectivity issues, rate-limiting, or website changes, you can manually update the `config/config.yaml` file.
-1. Visit the official NSE India website (e.g., `https://www.nseindia.com/market-data/live-equity-market` and navigate to the Nifty 50 and Bank Nifty constituent pages).
-2. Manually identify the stock symbols (e.g., RELIANCE.NS) and their full names.
-3. Edit the `config/config.yaml` file under the `watchlist` section to add or remove stocks. Ensure the format `symbol: SYMBOL.NS` and `name: Company Name` is followed.
+2.  **Install Dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-**Last Watchlist Update:**
-The `config/config.yaml` file will contain a `last_updated` timestamp indicating when the watchlist was last automatically updated.
+3.  **Run the App**:
+    ```bash
+    streamlit run src/main.py
+    ```
 
-## Intended Features
-- **Data Collection:** Automated fetching of historical stock data, news articles, and market data.
-- **Sentiment Analysis:** AI-driven analysis of news sentiment to gauge market mood.
-- **Technical Analysis:** Calculation of various technical indicators (e.g., RSI, MACD, Bollinger Bands).
-- **Signal Generation:** Combining sentiment and technical analysis to generate trading recommendations.
-- **Backtesting:** (Future) Ability to backtest strategies against historical data.
-- **Real-time Dashboard:** (Future) A Streamlit-based dashboard for real-time signal display.
+## Usage Guide
+
+The application has three modes, selectable from the Sidebar:
+
+### 1. Live Analysis
+-   **Purpose**: Day-to-day trading.
+-   **How to use**: 
+    -   Click "Run Analysis Now".
+    -   View the "BTST Signals" and "Options Signals" tables.
+    -   Expand "Charts" to see the setup.
+    -   Enable "Live Monitor" to auto-refresh every 60 seconds.
+
+### 2. Backtesting
+-   **Purpose**: Research and Validation.
+-   **How to use**:
+    -   Select "Backtesting" from the Sidebar.
+    -   Choose a stock (e.g., `RELIANCE.NS`).
+    -   Set your Strategy Parameters (Stop Loss %, Target %).
+    -   Click "Run Backtest".
+    -   Analyze the **Equity Curve** and **Metrics** (Sharpe Ratio, Win Rate).
+
+### 3. Paper Trading (Forward Testing)
+-   **Purpose**: Practice without risk.
+-   **How to use**:
+    -   Select "Paper Trading".
+    -   View your **Virtual Cash** (starts at ₹1,00,000).
+    -   Use the "Manual Trade Entry" to place test trades (or automate it in future).
+    -   Watch your P&L update in real-time as prices change.
+
+## Configuration
+-   **Watchlist**: Edit `config/config.yaml` to add/remove stocks.
+-   **Risk Settings**: Adjust "Account Size" and "Risk %" in the Sidebar.
+
+## Disclaimer
+**This tool is for educational and research purposes only.**
+Trading stocks and options involves significant risk of loss. The AI signals are generated based on algorithms and historical patterns, which do not guarantee future performance. Always do your own due diligence.
