@@ -27,7 +27,11 @@ def fetch_single_ticker(ticker, start_date, end_date, output_dir):
     retries = 3
     for i in range(retries):
         try:
-            logger.info(f"Fetching data for {ticker} (Attempt {i+1}/{retries})")
+            # Add random delay to be polite and avoid rate limits
+            delay = random.uniform(1.0, 3.0) 
+            logger.info(f"Fetching data for {ticker} (Attempt {i+1}/{retries}) - Waiting {delay:.2f}s")
+            time.sleep(delay)
+            
             data = yf.download(ticker, start=start_date, end=end_date, progress=False, threads=False, session=session)
 
             if not data.empty:
@@ -75,7 +79,8 @@ def fetch_stock_data(tickers, output_dir="data", start_date=None, end_date=None)
     if isinstance(end_date, datetime): end_date = end_date.date()
 
     summary = {}
-    max_workers = min(10, len(tickers)) # Limit threads to 10 or number of tickers
+    import random
+    max_workers = 2 # Significantly reduced threads to avoid IP blocking on shared cloud
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_ticker = {
