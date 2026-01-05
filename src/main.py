@@ -379,6 +379,7 @@ if __name__ == "__main__":
         learning_module.update_weights()
         logger.info("Self-learning module initialized and weights updated from historical data.")
         run_analysis(db_manager, market_manager, signal_validator, learning_module, chart_manager, risk_manager)
+        st.rerun()
 
     # Main content area
     st.title("AI Trading Signal Tool (Industry Level)")
@@ -406,6 +407,7 @@ if __name__ == "__main__":
                     learning_module.update_weights()
                     logger.info("Self-learning module initialized and weights updated from historical data.")
                     run_analysis(db_manager, market_manager, signal_validator, learning_module, chart_manager, risk_manager)
+                    st.rerun()
     
     elif mode == "Backtesting":
         st.header("Strategy Backtesting")
@@ -644,6 +646,8 @@ if __name__ == "__main__":
 
 
     st.header("Latest News Sentiment")
+    # Debug info
+    st.write(f"Debug: News in Session State: {'Yes' if 'news_df' in st.session_state else 'No'}. Empty: {st.session_state['news_df'].empty if 'news_df' in st.session_state else 'N/A'}")
     if 'news_df' in st.session_state and not st.session_state['news_df'].empty:
         st.subheader("Collected News Headlines with Sentiment")
         st.dataframe(st.session_state['news_df'][['symbol', 'headline', 'sentiment', 'confidence']], hide_index=True)

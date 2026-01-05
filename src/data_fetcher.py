@@ -16,13 +16,9 @@ def fetch_single_ticker(ticker, start_date, end_date, output_dir):
     Helper function to fetch data for a single ticker.
     """
     import yfinance as yf
-    import requests
     import time
     
-    session = requests.Session()
-    session.headers.update({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    })
+    # Session removed as it was valid proof of failure in test_yf.py
 
     data = pd.DataFrame() # Initialize
     retries = 3
@@ -33,7 +29,9 @@ def fetch_single_ticker(ticker, start_date, end_date, output_dir):
             logger.info(f"Fetching data for {ticker} (Attempt {i+1}/{retries}) - Waiting {delay:.2f}s")
             time.sleep(delay)
             
-            data = yf.download(ticker, start=start_date, end=end_date, progress=False, threads=False, session=session)
+            # Use Ticker.history which proved reliable in testing
+            dat = yf.Ticker(ticker)
+            data = dat.history(start=start_date, end=end_date)
 
             if not data.empty:
                 break
@@ -117,7 +115,9 @@ def get_all_watchlist_tickers(config_path=None):
 
 if __name__ == "__main__":
     # Integrate with watchlist_manager
-    all_tickers = get_all_watchlist_tickers()
+    all_tickers = get_all_watchlist_tickers() 
+    # all_tickers = ["ADANIPORTS.NS", "RELIANCE.NS"]
+    print(f"Testing fetch for: {all_tickers}")
     if all_tickers:
         download_summary = fetch_stock_data(all_tickers)
         print("\n--- Download Summary ---")
