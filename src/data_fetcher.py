@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 import os
 import logging
+import random
 from .watchlist_manager import WatchlistManager
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -79,7 +80,6 @@ def fetch_stock_data(tickers, output_dir="data", start_date=None, end_date=None)
     if isinstance(end_date, datetime): end_date = end_date.date()
 
     summary = {}
-    import random
     max_workers = 2 # Significantly reduced threads to avoid IP blocking on shared cloud
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
