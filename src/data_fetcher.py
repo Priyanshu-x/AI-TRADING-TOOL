@@ -14,15 +14,36 @@ def fetch_single_ticker(ticker, start_date, end_date, output_dir):
     """
     Helper function to fetch data for a single ticker.
     """
-    import yfinance as yf # Import locally to avoid potential threading issues with some libs
+    import yfinance as yf
+    import requests
+    import time
+    
+    session = requests.Session()
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    })
+
+    data = pd.DataFrame() # Initialize
+    retries = 3
+    for i in range(retries):
+        try:
+            logger.info(f"Fetching data for {ticker} (Attempt {i+1}/{retries})")
+            data = yf.download(ticker, start=start_date, end=end_date, progress=False, threads=False, session=session)
+
+            if not data.empty:
+                break
+            else:
+                logger.warning(f"Empty data for {ticker} on attempt {i+1}")
+                time.sleep(2)
+        except Exception as e:
+            logger.warning(f"Error fetching {ticker} on attempt {i+1}: {e}")
+            time.sleep(2)
+    
+    if data.empty:
+        logger.warning(f"No data found for {ticker} after {retries} attempts.")
+        return ticker, {"status": "failed", "records": 0, "reason": "No data found"}
+    
     try:
-        logger.info(f"Fetching data for {ticker} from {start_date} to {end_date}")
-        data = yf.download(ticker, start=start_date, end=end_date, progress=False, threads=False) # threads=False since we handle threading
-
-        if data.empty:
-            logger.warning(f"No data found for {ticker}")
-            return ticker, {"status": "failed", "records": 0, "reason": "No data found"}
-
         file_path = os.path.join(output_dir, f"{ticker}_data.csv")
         data = data.reset_index()
         data.rename(columns={'index': 'Date'}, inplace=True)
@@ -31,7 +52,7 @@ def fetch_single_ticker(ticker, start_date, end_date, output_dir):
         return ticker, {"status": "success", "records": len(data), "file": file_path}
 
     except Exception as e:
-        logger.error(f"Failed to download {ticker}: {e}")
+        logger.error(f"Failed to process/save data for {ticker}: {e}")
         return ticker, {"status": "failed", "records": 0, "reason": str(e)}
 
 def fetch_stock_data(tickers, output_dir="data", start_date=None, end_date=None):
